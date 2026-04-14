@@ -1,4 +1,4 @@
-const CACHE_NAME = 'godot-helper-v1';
+const CACHE_NAME = 'godot-helper-v2';
 const ASSETS = [
   './',
   './index.html',
