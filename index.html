@@ -1220,9 +1220,23 @@ document.getElementById('tabBar').addEventListener('wheel', function(e) {
   }
 }, { passive: false });
 
-// ── Service Worker 등록 ──
+// ── Service Worker 등록 (강제 갱신) ──
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
+  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+    .then(reg => {
+      // 즉시 업데이트 체크
+      reg.update();
+      // 새 SW가 대기 중이면 바로 활성화
+      reg.addEventListener('updatefound', () => {
+        const newSW = reg.installing;
+        newSW.addEventListener('statechange', () => {
+          if (newSW.state === 'activated') {
+            console.log('서비스워커 갱신 완료');
+          }
+        });
+      });
+    })
+    .catch(() => {});
 }
 </script>
 </body>
