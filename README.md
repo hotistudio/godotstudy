@@ -3,7 +3,7 @@
 Godot Engine 4.x를 공부하면서 쓸 수 있는 개인 학습 도우미입니다.  
 용어 정리, 코드 스니펫 보관, 단계별 가이드, 퀴즈까지 한 페이지에서 해결!
 
-> **👉 [바로 사용하기](https://유저이름.github.io/godot-learning-helper/)**  
+> **👉 [바로 사용하기](https://hotistudio.github.io/godotstudy/)**  
 > ↑ 배포 후 본인의 GitHub Pages 주소로 바꿔주세요.
 
 ---
