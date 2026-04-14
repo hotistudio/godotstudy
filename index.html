@@ -44,6 +44,7 @@
   --tag-movement: #57c77e; --tag-collision: #a07ae0; --tag-input: #e89c4a;
   --tag-animation: #e06088; --tag-scene: #478cbf; --tag-editor: #478cbf;
   --tag-project: #57c77e; --tag-asset: #a07ae0; --tag-debug: #e89c4a;
+  --tag-shader: #e0c060;
   --code-bg: #1a1e28; --code-fg: #c8cedd;
   --overlay-bg: rgba(14,17,24,0.7);
   --step-border: rgba(58,66,89,0.5);
@@ -65,6 +66,7 @@
   --tag-movement: #3ba55d; --tag-collision: #8a5ec0; --tag-input: #d08530;
   --tag-animation: #c04068; --tag-scene: #3d7db5; --tag-editor: #3d7db5;
   --tag-project: #3ba55d; --tag-asset: #8a5ec0; --tag-debug: #d08530;
+  --tag-shader: #b8960a;
   --code-bg: #1e2530; --code-fg: #c8cedd;
   --overlay-bg: rgba(30,42,58,0.4);
   --step-border: rgba(212,219,229,0.8);
@@ -89,6 +91,7 @@
 [data-theme="light"] .tag-project { background: rgba(59,165,93,0.1); }
 [data-theme="light"] .tag-asset { background: rgba(138,94,192,0.1); }
 [data-theme="light"] .tag-debug { background: rgba(208,133,48,0.1); }
+[data-theme="light"] .tag-shader { background: rgba(184,150,10,0.1); }
 [data-theme="light"] .card { box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 [data-theme="light"] .card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
 [data-theme="light"] .modal { box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
@@ -214,6 +217,7 @@ input::placeholder { color:var(--muted); }
 .tag-project { background:rgba(87,199,126,0.15); color:var(--tag-project); }
 .tag-asset { background:rgba(160,122,224,0.15); color:var(--tag-asset); }
 .tag-debug { background:rgba(232,156,74,0.15); color:var(--tag-debug); }
+.tag-shader { background:rgba(224,192,96,0.15); color:var(--tag-shader); }
 .card-desc { font-size:13px; color:var(--ink2); line-height:1.7; margin-bottom:10px; }
 .card-memo { font-size:12px; color:var(--muted); line-height:1.6; border-top:1px dashed var(--border); padding-top:10px; white-space:pre-wrap; word-break:break-word; }
 .card-memo::before { content:'💬 '; }
@@ -248,25 +252,37 @@ input::placeholder { color:var(--muted); }
 .modal { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:28px; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; animation:popIn 0.2s ease; box-shadow:0 20px 60px rgba(0,0,0,0.4); }
 .modal h3 { font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--godot-blue); margin-bottom:20px; font-weight:400; }
 
-/* ── Quiz Mode ── */
-.quiz-container { max-width:600px; margin:0 auto; padding:20px 0; }
-.quiz-progress { display:flex; align-items:center; gap:12px; margin-bottom:24px; font-size:12px; color:var(--muted); }
-.quiz-bar { flex:1; height:6px; background:var(--surface2); border-radius:3px; overflow:hidden; }
-.quiz-bar-fill { height:100%; background:var(--godot-blue); border-radius:3px; transition:width 0.3s; }
-.quiz-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:32px; text-align:center; }
-.quiz-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:2px; margin-bottom:16px; }
-.quiz-term { font-size:24px; color:var(--ink); margin-bottom:28px; line-height:1.4; }
-.quiz-options { display:flex; flex-direction:column; gap:10px; text-align:left; }
-.quiz-opt { padding:14px 18px; background:var(--bg); border:1px solid var(--border); border-radius:8px; cursor:pointer; font-size:13px; color:var(--ink2); line-height:1.6; transition:all 0.15s; }
-.quiz-opt:hover { border-color:var(--godot-blue); color:var(--ink); }
-.quiz-opt.correct { border-color:var(--quiz-correct); background:rgba(87,199,126,0.1); color:var(--quiz-correct); }
-.quiz-opt.wrong { border-color:var(--quiz-wrong); background:rgba(224,96,96,0.1); color:var(--quiz-wrong); }
-.quiz-opt.disabled { pointer-events:none; opacity:0.6; }
-.quiz-opt.disabled.correct { opacity:1; }
-.quiz-result { text-align:center; padding:40px 20px; }
-.quiz-score { font-size:48px; color:var(--godot-blue); margin-bottom:8px; }
-.quiz-score-label { font-size:14px; color:var(--muted); margin-bottom:24px; }
-.quiz-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+/* ── Roadmap ── */
+.roadmap-container { max-width:700px; margin:0 auto; padding:10px 0; }
+.roadmap-week { background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:14px; overflow:hidden; animation:fadeIn 0.25s ease both; }
+.roadmap-week-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; cursor:pointer; transition:background 0.15s; }
+.roadmap-week-header:hover { background:var(--surface2); }
+.roadmap-week-title { font-size:14px; color:var(--ink); }
+.roadmap-week-title span { color:var(--godot-blue); margin-right:8px; }
+.roadmap-week-progress { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+.roadmap-mini-bar { width:60px; height:5px; background:var(--bg); border-radius:3px; overflow:hidden; }
+.roadmap-mini-fill { height:100%; background:var(--godot-blue); border-radius:3px; transition:width 0.3s; }
+.roadmap-tasks { padding:0 20px 16px; display:none; }
+.roadmap-tasks.open { display:block; }
+.roadmap-task { display:flex; align-items:flex-start; gap:10px; padding:8px 0; border-bottom:1px solid var(--step-border); font-size:13px; color:var(--ink2); line-height:1.6; }
+.roadmap-task:last-child { border-bottom:none; }
+.roadmap-task input[type="checkbox"] { margin-top:4px; accent-color:var(--godot-blue); width:16px; height:16px; cursor:pointer; flex-shrink:0; }
+.roadmap-task.done label { text-decoration:line-through; color:var(--muted); }
+.roadmap-task label { cursor:pointer; }
+.roadmap-task .task-related { font-size:11px; color:var(--godot-blue); cursor:pointer; margin-left:4px; }
+.roadmap-task .task-related:hover { text-decoration:underline; }
+
+/* ── Troubleshoot card ── */
+.ts-symptom { font-size:13px; color:var(--accent-red); margin-bottom:8px; padding:8px 12px; background:rgba(224,96,96,0.08); border-radius:6px; border-left:3px solid var(--accent-red); }
+.ts-cause { font-size:12px; color:var(--muted); margin-bottom:6px; }
+.ts-cause::before { content:'원인: '; color:var(--accent-orange); }
+.ts-solution { font-size:13px; color:var(--ink2); line-height:1.7; }
+.ts-solution::before { content:'✅ '; }
+
+/* ── Related links ── */
+.related-links { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); }
+.related-link { font-size:11px; color:var(--godot-blue); background:var(--godot-blue-dim); padding:3px 10px; border-radius:4px; cursor:pointer; transition:all 0.15s; }
+.related-link:hover { background:var(--godot-blue); color:white; }
 
 /* ── Toast ── */
 .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--godot-blue); color:white; font-family:'Moneygraphy',sans-serif; font-size:13px; padding:12px 28px; border-radius:10px; z-index:200; transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); pointer-events:none; box-shadow:0 4px 20px rgba(71,140,191,0.3); }
@@ -282,7 +298,6 @@ input::placeholder { color:var(--muted); }
   .tab-btn { padding:10px 14px; font-size:12px; }
   .cards { grid-template-columns:1fr; }
   header { padding:24px 0 18px; }
-  .quiz-term { font-size:18px; }
 }
 </style>
 </head>
@@ -327,7 +342,7 @@ input::placeholder { color:var(--muted); }
       <p id="emptyMsg"></p>
     </div>
   </div>
-  <div id="quizArea" style="display:none"></div>
+  <div id="roadmapArea" style="display:none"></div>
 </div>
 
 <div class="overlay" id="editOverlay" onclick="if(event.target===this)this.classList.remove('open')">
@@ -343,11 +358,12 @@ const TABS = [
   { id:'glossary', icon:'📖', label:'용어/개념' },
   { id:'snippets', icon:'💻', label:'코드 스니펫' },
   { id:'howto',    icon:'🖱️', label:'How-to' },
-  { id:'quiz',     icon:'🧠', label:'퀴즈' },
+  { id:'troubleshoot', icon:'🔧', label:'트러블슈팅' },
+  { id:'roadmap',  icon:'🗺️', label:'로드맵' },
 ];
 
 const GLOSSARY_CATS = { node:'노드', gdscript:'GDScript', physics:'물리', ui:'UI', signal:'시그널', etc:'기타' };
-const SNIPPET_CATS = { movement:'이동', collision:'충돌', input:'입력', animation:'애니메이션', scene:'씬관리', ui:'UI', etc:'기타' };
+const SNIPPET_CATS = { movement:'이동', collision:'충돌', input:'입력', animation:'애니메이션', scene:'씬관리', ui:'UI', shader:'셰이더', etc:'기타' };
 const HOWTO_CATS = { editor:'에디터', project:'프로젝트', asset:'에셋', debug:'디버그', etc:'기타' };
 const STATUS_LABELS = { known:'이해함', unsure:'헷갈림', unknown:'모름' };
 const STATUS_CYCLE = ['unknown','unsure','known'];
@@ -398,6 +414,13 @@ const defaultGlossary = [
   { id:42, term:'mouse_entered / mouse_exited', cat:'signal', desc:'마우스가 Area2D 또는 Control 노드 위에 올라가거나 벗어날 때 발생하는 시그널. 하이라이트, 커서 변경 등에 사용.', memo:'오브젝트를 밝게 표시하거나 커서를 손가락 모양으로 바꿀 때', date:'2026-04-14', status:'unknown', pinned:false },
   { id:43, term:'Input.set_default_cursor_shape()', cat:'gdscript', desc:'마우스 커서 모양을 변경하는 함수. CURSOR_ARROW(기본), CURSOR_POINTING_HAND(클릭 가능), CURSOR_FORBIDDEN(불가) 등.', memo:'상호작용 가능한 오브젝트 위에서 커서 변경하면 UX 향상', date:'2026-04-14', status:'unknown', pinned:false },
   { id:44, term:'@export Array / Dictionary', cat:'gdscript', desc:'배열이나 딕셔너리를 인스펙터에서 편집 가능하게 노출. 상자 안 아이템 목록, 대화 데이터 등을 에디터에서 직접 설정할 수 있다.', memo:'@export var items: Array[Dictionary] 처럼 타입 힌트 사용', date:'2026-04-14', status:'unknown', pinned:false },
+  { id:45, term:'Shader (셰이더)', cat:'etc', desc:'GPU에서 실행되는 프로그램으로, 픽셀/정점의 렌더링 방식을 제어한다. Godot은 자체 셰이더 언어(.gdshader)를 사용하며, GLSL과 유사하지만 더 간단하다.', memo:'셰이더 타입: canvas_item(2D), spatial(3D), particles(파티클)', date:'2026-04-14', status:'unknown', pinned:false },
+  { id:46, term:'ShaderMaterial', cat:'etc', desc:'셰이더를 노드에 적용하기 위한 머티리얼 리소스. Sprite2D, ColorRect, CanvasLayer 등의 Material 속성에 설정한다.', memo:'material = ShaderMaterial.new() 으로 코드에서도 생성 가능', date:'2026-04-14', status:'unknown', pinned:false },
+  { id:47, term:'uniform (셰이더 변수)', cat:'etc', desc:'GDScript에서 셰이더로 값을 전달하는 변수. 셰이더 안에서 uniform으로 선언하고, 코드에서 material.set_shader_parameter()로 값을 바꾼다.', memo:'uniform float intensity : hint_range(0.0, 1.0) = 0.5; 처럼 범위 지정 가능', date:'2026-04-14', status:'unknown', pinned:false },
+  { id:48, term:'fragment() 함수', cat:'etc', desc:'셰이더에서 각 픽셀의 색상을 결정하는 함수. COLOR 변수에 값을 할당하여 최종 출력 색상을 제어한다. 2D에서는 TEXTURE와 UV를 활용.', memo:'COLOR = texture(TEXTURE, UV); 가 기본형. 여기에 효과를 추가', date:'2026-04-14', status:'unknown', pinned:false },
+  { id:49, term:'WorldEnvironment', cat:'node', desc:'씬 전체에 환경 효과를 적용하는 노드. 글로우(Glow), 톤매핑, 안개, 색보정 등 후처리(Post-Processing) 효과를 설정한다.', memo:'2D에서도 사용 가능! Environment 리소스에서 Glow 켜면 반짝반짝', date:'2026-04-14', status:'unknown', pinned:false },
+  { id:50, term:'BackBufferCopy', cat:'node', desc:'화면 내용을 셰이더에서 읽을 수 있게 복사하는 노드. 블러(흐림), 굴절, 물결 효과 등 화면 기반 셰이더에 필요하다.', memo:'SCREEN_TEXTURE 대체용. 해당 영역의 화면 픽셀을 셰이더에서 읽음', date:'2026-04-14', status:'unknown', pinned:false },
+  { id:51, term:'CanvasGroup', cat:'node', desc:'자식 노드를 하나의 그룹으로 묶어 셰이더를 일괄 적용하는 노드. 캐릭터 전체(본체+무기+이펙트)에 피격 플래시를 한 번에 걸 때 유용.', memo:'자식 노드 경계가 사라지고 하나의 텍스처로 합쳐짐', date:'2026-04-14', status:'unknown', pinned:false },
 ];
 
 const defaultSnippets = [
@@ -429,6 +452,14 @@ const defaultSnippets = [
   { id:33, title:'조사 가능한 오브젝트 (서랍/상자)', cat:'input', code:'# searchable_container.gd\nextends Area2D\n\n@export var container_name: String = "낡은 서랍"\n@export var items_inside: Array[Dictionary] = [\n\t# {"id": "key_red", "name": "빨간 열쇠"},\n\t# {"id": "note_02", "name": "찢어진 편지"},\n]\n@export var empty_message: String = "더 이상 아무것도 없다."\n@export var search_message: String = "서랍을 뒤져본다..."\nvar already_searched: bool = false\n\nsignal searched\n\n# 상호작용 시스템(E키)과 연동\nfunc interact():\n\tif already_searched:\n\t\tDialogBox.start_dialog([{"name":"","text":empty_message}])\n\t\treturn\n\t\n\t# 조사 연출\n\tDialogBox.start_dialog([{"name":"","text":search_message}])\n\tawait DialogBox.dialog_finished\n\t\n\tif items_inside.is_empty():\n\t\tDialogBox.start_dialog([{"name":"","text":"아무것도 없다."}])\n\t\treturn\n\t\n\t# 아이템 하나씩 획득\n\tfor item in items_inside:\n\t\tInventory.add_item(item.id)\n\t\tDialogBox.start_dialog([{"name":"","text":"[" + item.name + "] 을(를) 발견했다!"}])\n\t\tawait DialogBox.dialog_finished\n\t\n\talready_searched = true\n\tsearched.emit()\n\t# 외형 변경 (열린 서랍 등)\n\t$AnimatedSprite2D.play("opened")', desc:'서랍, 상자, 책장 등을 조사하면 안에 있는 아이템이 인벤토리에 들어가는 패턴. 한 번만 획득 가능.', memo:'items_inside를 @export로 에디터에서 상자마다 다른 아이템 설정. searched 시그널로 퍼즐 연동 가능', date:'2026-04-14', pinned:false },
   { id:34, title:'숨겨진 아이템 (조건부 발견)', cat:'scene', code:'# hidden_item.gd\nextends Node2D\n\n@export var item_id: String = "secret_key"\n@export var item_name: String = "비밀 열쇠"\n@export var required_flag: String = ""  # 이걸 알아야 발견 가능\n@export var hint_message: String = "벽에 이상한 틈이 있다..."\n@export var discover_message: String = "틈 사이에서 열쇠를 발견했다!"\n\nvar discovered: bool = false\n\nfunc interact():\n\tif discovered:\n\t\tDialogBox.start_dialog([{"name":"","text":"이미 조사한 곳이다."}])\n\t\treturn\n\t\n\t# 단서 플래그 확인\n\tif required_flag != "" and not GameManager.story_flags.get(required_flag, false):\n\t\t# 단서를 모르면 평범한 반응\n\t\tDialogBox.start_dialog([{"name":"","text":"별다른 건 없어 보인다."}])\n\t\treturn\n\t\n\t# 단서를 알고 있으면 발견!\n\tDialogBox.start_dialog([{"name":"","text":hint_message}])\n\tawait DialogBox.dialog_finished\n\tDialogBox.start_dialog([{"name":"","text":discover_message}])\n\tawait DialogBox.dialog_finished\n\t\n\tInventory.add_item(item_id)\n\tdiscovered = true\n\tGameManager.story_flags["found_" + item_id] = true\n\t# 시각적 변화 (예: 열린 틈)\n\t$Sprite2D.frame = 1', desc:'특정 단서(story_flag)를 알고 있어야 발견할 수 있는 숨겨진 아이템. 미스터리/탈출 게임 핵심 패턴.', memo:'required_flag가 비어있으면 아무 조건 없이 발견 가능. 퍼즐 순서 강제 가능', date:'2026-04-14', pinned:false },
   { id:35, title:'아이템 사용 (인벤토리)', cat:'ui', code:'# inventory.gd에 추가\nfunc use_item(item_id: String) -> bool:\n\tif not has_item(item_id):\n\t\treturn false\n\t\n\tvar item_data = ItemDB.get_data(item_id)\n\tmatch item_data.type:\n\t\t"consumable":\n\t\t\t# 소모품 (회복 포션 등)\n\t\t\tapply_effect(item_data)\n\t\t\tremove_item(item_id)\n\t\t"key_item":\n\t\t\t# 열쇠 아이템은 사용 불가 (자동 사용)\n\t\t\tDialogBox.start_dialog([{"name":"","text":"지금은 사용할 수 없다."}])\n\t\t"document":\n\t\t\t# 문서/메모 → 읽기\n\t\t\tshow_document(item_data)\n\treturn true\n\nfunc apply_effect(data: Dictionary):\n\tvar player = get_tree().get_first_node_in_group("player")\n\tmatch data.effect:\n\t\t"heal":\n\t\t\tplayer.health_component.heal(data.value)\n\t\t\tDialogBox.start_dialog([{"name":"","text":"체력이 " + str(data.value) + " 회복되었다."}])\n\nfunc show_document(data: Dictionary):\n\t# 문서 UI 팝업 (메모, 일기, 편지 등)\n\tDialogBox.start_dialog([{"name":data.name,"text":data.content}])\n\n# item_db.gd (Autoload) - 아이템 데이터베이스\nextends Node\n\nvar database = {\n\t"potion": {"name":"회복 포션","type":"consumable","effect":"heal","value":30,"icon":"potion.png"},\n\t"key_red": {"name":"빨간 열쇠","type":"key_item","icon":"key_red.png"},\n\t"note_01": {"name":"수상한 메모","type":"document","content":"3층 복도 끝에 비밀이...","icon":"note.png"},\n}\n\nfunc get_data(id: String) -> Dictionary:\n\treturn database.get(id, {})', desc:'인벤토리에서 아이템을 선택하여 사용하는 시스템. 소모품(회복), 열쇠아이템, 문서(읽기) 타입 구분.', memo:'ItemDB를 Autoload로 등록. 아이템 데이터를 한 곳에서 관리', date:'2026-04-14', pinned:false },
+  { id:37, title:'셰이더: 피격 흰색 플래시', cat:'shader', code:'// hit_flash.gdshader\nshader_type canvas_item;\n\nuniform float flash_amount : hint_range(0.0, 1.0) = 0.0;\nuniform vec4 flash_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);\n\nvoid fragment() {\n\tvec4 tex = texture(TEXTURE, UV);\n\tCOLOR = mix(tex, flash_color, flash_amount);\n\tCOLOR.a = tex.a;  // 원래 투명도 유지\n}\n\n// GDScript에서 사용:\n// 피격 시\nfunc flash_hit():\n\tvar mat = $Sprite2D.material as ShaderMaterial\n\tmat.set_shader_parameter("flash_amount", 1.0)\n\tvar tween = create_tween()\n\ttween.tween_property(mat, "shader_parameter/flash_amount", 0.0, 0.15)', desc:'피격 시 캐릭터가 순간적으로 흰색으로 번쩍이는 히트 이펙트. 가장 기본적인 게임 셰이더.', memo:'flash_color를 빨간색으로 바꾸면 데미지 느낌, 파란색이면 방어/쉴드 느낌', date:'2026-04-14', pinned:false },
+  { id:38, title:'셰이더: 디졸브 효과', cat:'shader', code:'// dissolve.gdshader\nshader_type canvas_item;\n\nuniform float progress : hint_range(0.0, 1.0) = 0.0;\nuniform sampler2D noise_tex;  // 노이즈 텍스처\nuniform vec4 edge_color : source_color = vec4(1.0, 0.3, 0.0, 1.0);\nuniform float edge_width : hint_range(0.0, 0.1) = 0.03;\n\nvoid fragment() {\n\tvec4 tex = texture(TEXTURE, UV);\n\tfloat noise = texture(noise_tex, UV).r;\n\t\n\t// 노이즈 값이 progress보다 작으면 투명\n\tif (noise < progress) {\n\t\tdiscard;\n\t}\n\t\n\t// 경계면에 빛나는 테두리\n\tif (noise < progress + edge_width) {\n\t\tCOLOR = edge_color;\n\t} else {\n\t\tCOLOR = tex;\n\t}\n}\n\n// GDScript에서 사용:\nfunc dissolve_out(duration: float = 1.0):\n\tvar mat = $Sprite2D.material as ShaderMaterial\n\tvar tween = create_tween()\n\ttween.tween_property(mat, "shader_parameter/progress", 1.0, duration)\n\tawait tween.finished\n\tqueue_free()', desc:'캐릭터나 오브젝트가 노이즈 패턴으로 부서지듯 사라지는 효과. 적 처치, 텔레포트 등에 사용.', memo:'노이즈 텍스처를 인스펙터에서 설정. FastNoiseLite로 생성 가능', date:'2026-04-14', pinned:false },
+  { id:39, title:'셰이더: 외곽선 (아웃라인)', cat:'shader', code:'// outline.gdshader\nshader_type canvas_item;\n\nuniform vec4 outline_color : source_color = vec4(1.0, 1.0, 0.0, 1.0);\nuniform float outline_width : hint_range(0.0, 10.0) = 1.0;\nuniform bool enabled = true;\n\nvoid fragment() {\n\tvec4 tex = texture(TEXTURE, UV);\n\t\n\tif (enabled && tex.a < 0.5) {\n\t\t// 주변 픽셀 확인\n\t\tvec2 size = TEXTURE_PIXEL_SIZE * outline_width;\n\t\tfloat a = texture(TEXTURE, UV + vec2(-size.x, 0)).a;\n\t\ta += texture(TEXTURE, UV + vec2(size.x, 0)).a;\n\t\ta += texture(TEXTURE, UV + vec2(0, -size.y)).a;\n\t\ta += texture(TEXTURE, UV + vec2(0, size.y)).a;\n\t\t\n\t\tif (a > 0.0) {\n\t\t\tCOLOR = outline_color;\n\t\t} else {\n\t\t\tCOLOR = tex;\n\t\t}\n\t} else {\n\t\tCOLOR = tex;\n\t}\n}\n\n// GDScript에서 외곽선 토글:\nfunc highlight(on: bool):\n\tvar mat = $Sprite2D.material as ShaderMaterial\n\tmat.set_shader_parameter("enabled", on)', desc:'스프라이트 주변에 색상 외곽선을 그리는 셰이더. 상호작용 가능한 오브젝트 강조, 선택된 캐릭터 표시 등.', memo:'outline_color를 노란색으로 하면 "조사 가능" 힌트, 빨간색이면 적 강조', date:'2026-04-14', pinned:false },
+  { id:40, title:'셰이더: 화면 비네트', cat:'shader', code:'// vignette.gdshader\nshader_type canvas_item;\n\nuniform float intensity : hint_range(0.0, 1.0) = 0.4;\nuniform float softness : hint_range(0.0, 1.0) = 0.5;\nuniform vec4 vignette_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);\n\nvoid fragment() {\n\tvec4 tex = texture(TEXTURE, UV);\n\t// 화면 중심에서의 거리\n\tfloat dist = distance(UV, vec2(0.5));\n\tfloat vignette = smoothstep(softness, softness - 0.15, dist);\n\tCOLOR = mix(vignette_color, tex, mix(1.0, vignette, intensity));\n}\n\n// 사용법:\n// ColorRect를 CanvasLayer 아래에 전체 화면 크기로 깔고\n// 이 셰이더를 Material에 적용\n// 위험할 때 intensity를 높여서 분위기 연출\n\n// GDScript:\nfunc set_danger_vignette(danger_level: float):\n\t$VignetteRect.material.set_shader_parameter("intensity", danger_level * 0.6)\n\t# 빨간색으로 변경\n\t$VignetteRect.material.set_shader_parameter("vignette_color", Color(0.3, 0, 0, 1))', desc:'화면 가장자리를 어둡게 만드는 비네트 효과. 공포/미스터리 분위기, HP 낮을 때 위험 연출에 사용.', memo:'ColorRect + CanvasLayer에 적용. intensity를 동적으로 바꿔서 상황 연출', date:'2026-04-14', pinned:false },
+  { id:41, title:'셰이더: 화면 블러 (흐림)', cat:'shader', code:'// blur.gdshader\nshader_type canvas_item;\n\nuniform float blur_amount : hint_range(0.0, 5.0) = 0.0;\nuniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;\n\nvoid fragment() {\n\tvec2 ps = SCREEN_PIXEL_SIZE;\n\tvec4 color = vec4(0.0);\n\t\n\t// 9-tap 가우시안 블러\n\tcolor += textureLod(screen_texture, SCREEN_UV + vec2(-ps.x, -ps.y) * blur_amount, 0.0) * 0.0625;\n\tcolor += textureLod(screen_texture, SCREEN_UV + vec2(0, -ps.y) * blur_amount, 0.0) * 0.125;\n\tcolor += textureLod(screen_texture, SCREEN_UV + vec2(ps.x, -ps.y) * blur_amount, 0.0) * 0.0625;\n\tcolor += textureLod(screen_texture, SCREEN_UV + vec2(-ps.x, 0) * blur_amount, 0.0) * 0.125;\n\tcolor += textureLod(screen_texture, SCREEN_UV, 0.0) * 0.25;\n\tcolor += textureLod(screen_texture, SCREEN_UV + vec2(ps.x, 0) * blur_amount, 0.0) * 0.125;\n\tcolor += textureLod(screen_texture, SCREEN_UV + vec2(-ps.x, ps.y) * blur_amount, 0.0) * 0.0625;\n\tcolor += textureLod(screen_texture, SCREEN_UV + vec2(0, ps.y) * blur_amount, 0.0) * 0.125;\n\tcolor += textureLod(screen_texture, SCREEN_UV + vec2(ps.x, ps.y) * blur_amount, 0.0) * 0.0625;\n\t\n\tCOLOR = color;\n}\n\n// 연기/안개 느낌: blur_amount를 서서히 올림\n// 일시정지 메뉴: blur_amount = 3.0\n// 컷씬 시작: blur → 선명 전환\nfunc fade_blur(target: float, duration: float = 0.5):\n\tvar mat = $BlurRect.material as ShaderMaterial\n\tvar tween = create_tween()\n\ttween.tween_property(mat, "shader_parameter/blur_amount", target, duration)', desc:'화면 전체를 흐리게 만드는 가우시안 블러. 일시정지 배경, 연기/안개 분위기, 컷씬 전환 등에 사용.', memo:'ColorRect를 CanvasLayer에 전체 화면으로 깔아서 사용. BackBufferCopy 필요할 수 있음', date:'2026-04-14', pinned:false },
+  { id:42, title:'셰이더: 글로우 (반짝임)', cat:'shader', code:'# WorldEnvironment로 글로우 설정 (코드 없이 가능!)\n\n# 방법 1: WorldEnvironment 노드 사용\n# 1. WorldEnvironment 노드를 씬에 추가\n# 2. Environment 리소스 생성\n# 3. Glow > Enabled = true\n# 4. Glow > Intensity = 1.0~2.0\n# 5. Glow > Bloom = 0.1~0.3\n# → 밝은 부분이 자동으로 번져서 반짝임!\n\n# 방법 2: 특정 오브젝트만 반짝이게\n# 스프라이트의 modulate를 1.0 이상으로 올리면 글로우 대상이 됨\nfunc glow_pulse():\n\tvar tween = create_tween().set_loops()\n\ttween.tween_property($Sprite2D, "modulate",\n\t\tColor(1.5, 1.5, 1.5, 1.0), 0.8)\n\ttween.tween_property($Sprite2D, "modulate",\n\t\tColor(1.0, 1.0, 1.0, 1.0), 0.8)\n\n# 방법 3: 셰이더로 자체 글로우\n# // glow_pulse.gdshader\n# shader_type canvas_item;\n# uniform float glow_power : hint_range(0.0, 3.0) = 0.0;\n# void fragment() {\n#     vec4 tex = texture(TEXTURE, UV);\n#     float luminance = dot(tex.rgb, vec3(0.299, 0.587, 0.114));\n#     COLOR = tex + tex * glow_power * luminance;\n#     COLOR.a = tex.a;\n# }', desc:'밝은 부분이 번져 보이는 글로우/블룸 효과. 마법, 보석, 중요 아이템 등을 반짝이게 만든다.', memo:'WorldEnvironment이 가장 쉬움. modulate를 1.0 이상으로 올리면 해당 부분이 빛남', date:'2026-04-14', pinned:false },
+  { id:43, title:'셰이더: 색수차 (불안 연출)', cat:'shader', code:'// chromatic_aberration.gdshader\nshader_type canvas_item;\n\nuniform float amount : hint_range(0.0, 10.0) = 0.0;\nuniform sampler2D screen_texture : hint_screen_texture, filter_linear;\n\nvoid fragment() {\n\tvec2 offset = SCREEN_PIXEL_SIZE * amount;\n\t\n\tfloat r = texture(screen_texture, SCREEN_UV + vec2(offset.x, 0)).r;\n\tfloat g = texture(screen_texture, SCREEN_UV).g;\n\tfloat b = texture(screen_texture, SCREEN_UV - vec2(offset.x, 0)).b;\n\t\n\tCOLOR = vec4(r, g, b, 1.0);\n}\n\n// 보스전, 피격, 공포 장면에서 잠깐 켜기\nfunc glitch_effect(duration: float = 0.3):\n\tvar mat = $GlitchRect.material as ShaderMaterial\n\tmat.set_shader_parameter("amount", 5.0)\n\tvar tween = create_tween()\n\ttween.tween_property(mat, "shader_parameter/amount", 0.0, duration)', desc:'RGB 채널을 어긋나게 하여 불안정하고 이상한 분위기를 만드는 효과. 보스전 충격, 공포/미스터리 연출에 사용.', memo:'amount를 잠깐 올렸다 내리면 충격 효과, 계속 유지하면 공포 분위기', date:'2026-04-14', pinned:false },
+  { id:44, title:'셰이더: 물결/왜곡 효과', cat:'shader', code:'// wave_distortion.gdshader\nshader_type canvas_item;\n\nuniform float amplitude : hint_range(0.0, 0.05) = 0.01;\nuniform float frequency : hint_range(0.0, 50.0) = 15.0;\nuniform float speed : hint_range(0.0, 10.0) = 3.0;\nuniform sampler2D screen_texture : hint_screen_texture, filter_linear;\n\nvoid fragment() {\n\tvec2 uv = SCREEN_UV;\n\tuv.x += sin(uv.y * frequency + TIME * speed) * amplitude;\n\tuv.y += cos(uv.x * frequency + TIME * speed) * amplitude * 0.5;\n\tCOLOR = texture(screen_texture, uv);\n}\n\n// 활용:\n// 수중 장면: amplitude=0.01, frequency=15, speed=2\n// 열기/아지랑이: amplitude=0.003, frequency=30, speed=5\n// 충격파: amplitude를 순간적으로 올렸다가 내림\nfunc shockwave(intensity: float = 0.03):\n\tvar mat = $WaveRect.material as ShaderMaterial\n\tmat.set_shader_parameter("amplitude", intensity)\n\tvar tween = create_tween()\n\ttween.tween_property(mat, "shader_parameter/amplitude", 0.0, 0.5)', desc:'화면을 물결치듯 왜곡하는 효과. 수중, 열기, 충격파, 몽환적 분위기 등 다양하게 활용.', memo:'amplitude가 세기, frequency가 빽빽한 정도. 값을 작게 하면 은은한 아지랑이', date:'2026-04-14', pinned:false },
   { id:24, title:'세이브/로드 시스템', cat:'scene', code:'# save_manager.gd (Autoload)\nextends Node\n\nconst SAVE_PATH = "user://savegame.json"\n\nfunc save_game():\n\tvar save_data = {\n\t\t"player": {\n\t\t\t"position_x": Player.global_position.x,\n\t\t\t"position_y": Player.global_position.y,\n\t\t\t"hp": Player.health_component.current_hp,\n\t\t\t"scene": get_tree().current_scene.scene_file_path,\n\t\t},\n\t\t"inventory": Inventory.items.duplicate(true),\n\t\t"flags": GameManager.story_flags.duplicate(true),\n\t\t"playtime": GameManager.playtime,\n\t}\n\tvar file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)\n\tfile.store_string(JSON.stringify(save_data, "\\t"))\n\tfile.close()\n\tprint("게임 저장 완료!")\n\nfunc load_game():\n\tif not FileAccess.file_exists(SAVE_PATH):\n\t\tprint("세이브 파일 없음")\n\t\treturn false\n\tvar file = FileAccess.open(SAVE_PATH, FileAccess.READ)\n\tvar json = JSON.new()\n\tjson.parse(file.get_as_text())\n\tvar data = json.data\n\tfile.close()\n\t\n\t# 씬 전환\n\tget_tree().change_scene_to_file(data.player.scene)\n\tawait get_tree().tree_changed\n\t\n\t# 데이터 복원\n\tvar player = get_tree().get_first_node_in_group("player")\n\tplayer.global_position = Vector2(data.player.position_x, data.player.position_y)\n\tplayer.health_component.current_hp = data.player.hp\n\tInventory.items = data.inventory\n\tGameManager.story_flags = data.flags\n\treturn true\n\nfunc has_save() -> bool:\n\treturn FileAccess.file_exists(SAVE_PATH)', desc:'JSON 기반 세이브/로드. 위치, HP, 인벤토리, 스토리 플래그 저장.', memo:'user:// 경로는 OS별 사용자 폴더에 자동 저장됨', date:'2026-04-14', pinned:false },
   { id:25, title:'보스전 패턴 (페이즈)', cat:'scene', code:'extends CharacterBody2D\n\nenum BossPhase { INTRO, PHASE_1, PHASE_2, PHASE_3, DYING }\n\n@onready var hp = $HealthComponent\nvar phase = BossPhase.INTRO\nvar attack_timer: float = 0.0\n\nfunc _ready():\n\thp.health_changed.connect(_on_hp_changed)\n\thp.died.connect(_on_died)\n\tstart_intro()\n\nfunc start_intro():\n\t# 보스 등장 연출\n\t$AnimatedSprite2D.play("intro")\n\tawait $AnimatedSprite2D.animation_finished\n\tphase = BossPhase.PHASE_1\n\t$BossHPBar.visible = true\n\nfunc _physics_process(delta):\n\tmatch phase:\n\t\tBossPhase.PHASE_1:\n\t\t\tphase1_behavior(delta)\n\t\tBossPhase.PHASE_2:\n\t\t\tphase2_behavior(delta)\n\t\tBossPhase.PHASE_3:\n\t\t\tphase3_behavior(delta)\n\nfunc _on_hp_changed(current, max_val):\n\t$BossHPBar.value = float(current) / max_val * 100\n\tvar ratio = float(current) / max_val\n\tif ratio <= 0.6 and phase == BossPhase.PHASE_1:\n\t\tphase = BossPhase.PHASE_2\n\t\ttransition_phase("페이즈 2 시작!")\n\telif ratio <= 0.3 and phase == BossPhase.PHASE_2:\n\t\tphase = BossPhase.PHASE_3\n\t\ttransition_phase("최종 페이즈!")\n\nfunc transition_phase(msg: String):\n\t# 페이즈 전환 연출\n\tvelocity = Vector2.ZERO\n\t$AnimatedSprite2D.play("phase_change")\n\t# 화면 흔들기 등\n\nfunc _on_died():\n\tphase = BossPhase.DYING\n\t$AnimatedSprite2D.play("death")\n\t# 보스 클리어 연출, 보상 드랍 등', desc:'HP 비율에 따라 페이즈가 전환되는 보스전 기본 구조', memo:'페이즈마다 공격 패턴, 속도, 이펙트를 다르게 설정', date:'2026-04-14', pinned:false },
   { id:26, title:'카메라 흔들기 (화면 쉐이크)', cat:'scene', code:'# camera_shake.gd (Camera2D에 붙이기)\nextends Camera2D\n\nvar shake_amount: float = 0.0\nvar shake_decay: float = 5.0\n\nfunc shake(amount: float = 10.0, decay: float = 5.0):\n\tshake_amount = amount\n\tshake_decay = decay\n\nfunc _process(delta):\n\tif shake_amount > 0.1:\n\t\toffset = Vector2(\n\t\t\trandf_range(-shake_amount, shake_amount),\n\t\t\trandf_range(-shake_amount, shake_amount)\n\t\t)\n\t\tshake_amount = lerp(shake_amount, 0.0, shake_decay * delta)\n\telse:\n\t\toffset = Vector2.ZERO\n\t\tshake_amount = 0.0\n\n# 사용: $Camera2D.shake(15.0) ← 보스전 타격, 폭발 등', desc:'피격, 폭발, 보스 공격 시 화면을 흔드는 연출', memo:'amount가 클수록 세게 흔들림. decay가 크면 빨리 멈춤', date:'2026-04-14', pinned:false },
@@ -463,38 +494,141 @@ const defaultHowto = [
   { id:21, title:'클릭 가능한 아이템 만들기', cat:'editor', steps:['Area2D 씬을 생성하고 Sprite2D (아이템 이미지) 추가','CollisionShape2D 추가 → 클릭 가능한 영역 설정','인스펙터에서 input_pickable = true 체크 (마우스 입력 받기)','스크립트에서 input_event 시그널 연결 → 클릭 감지','mouse_entered/exited 시그널 연결 → 하이라이트 효과','@export var item_id로 어떤 아이템인지 설정','클릭 시 플레이어와의 거리를 체크하여 너무 멀면 "닿지 않는다" 표시','범위 안이면 Inventory.add_item() 호출 후 queue_free()'], memo:'input_pickable 안 켜면 마우스 입력을 아예 안 받으니 주의!', date:'2026-04-14', pinned:false },
   { id:22, title:'서랍/상자 조사 오브젝트 만들기', cat:'editor', steps:['Area2D (또는 StaticBody2D + Area2D) 씬을 생성','AnimatedSprite2D 추가 → "closed"와 "opened" 애니메이션 준비','Interactable 스크립트를 붙이거나 상속하여 E키 조사 가능하게 설정','@export var items_inside: Array[Dictionary]로 안에 들어있는 아이템 목록 설정','에디터 인스펙터에서 items_inside에 {"id":"key_red","name":"빨간 열쇠"} 등 추가','interact() 함수에서 아이템을 하나씩 Inventory에 추가 + 획득 메시지 표시','already_searched 변수로 두 번째 조사 시 "더 이상 없다" 표시','조사 후 AnimatedSprite2D를 "opened"로 변경하여 열린 상태 표시'], memo:'에디터에서 상자마다 다른 아이템을 넣을 수 있어서 레벨 디자인이 편함', date:'2026-04-14', pinned:false },
   { id:23, title:'아이템 데이터베이스(ItemDB) 만들기', cat:'project', steps:['새 스크립트 생성: item_db.gd','안에 var database: Dictionary로 모든 아이템 정보를 정의','각 아이템: {"name":"이름", "type":"consumable/key_item/document", "icon":"경로", ...}','type별로 사용 동작 구분: consumable=소모, key_item=자동사용, document=읽기','get_data(id) 함수로 아이템 정보 조회','프로젝트 설정 > 자동 로드에 ItemDB로 등록','인벤토리 UI에서 ItemDB.get_data(item_id).name 으로 이름 표시','아이템이 많아지면 JSON 파일로 분리 후 _ready()에서 로드'], memo:'아이템 데이터를 한 곳에서 관리하면 밸런스 조정이 쉬움', date:'2026-04-14', pinned:false },
+  { id:24, title:'스프라이트에 셰이더 적용하기', cat:'editor', steps:['셰이더를 적용할 Sprite2D (또는 AnimatedSprite2D) 노드 선택','인스펙터 > CanvasItem > Material > [새 ShaderMaterial] 클릭','Material 클릭하여 펼침 > Shader > [새 Shader] 클릭','Shader 클릭 → 셰이더 에디터가 열린다','shader_type canvas_item; 으로 시작하는 코드 작성','uniform 변수 선언하면 인스펙터에서 값을 조정 가능','fragment() 함수에서 COLOR를 조작하여 효과 적용','GDScript에서 material.set_shader_parameter("변수명", 값) 으로 동적 제어'], memo:'셰이더 파일은 .gdshader 확장자로 저장. 여러 노드에서 재사용 가능', date:'2026-04-14', pinned:false },
+  { id:25, title:'화면 전체에 셰이더 적용하기 (후처리)', cat:'editor', steps:['CanvasLayer 노드 추가 (layer를 높게 설정, 예: 100)','CanvasLayer 아래에 ColorRect 추가','ColorRect의 앵커를 Full Rect로 설정 (화면 전체 덮기)','ColorRect의 Color를 투명(알파=0)으로 설정','ColorRect의 Material > [새 ShaderMaterial] > [새 Shader]','셰이더에서 hint_screen_texture로 화면 내용을 읽어 가공','Mouse Filter를 Ignore로 설정 (클릭이 뚫고 지나가게)','GDScript에서 셰이더 파라미터를 조절하여 효과 ON/OFF'], memo:'비네트, 블러, 색수차, 왜곡 등 후처리 효과에 사용. Mouse Filter 안 바꾸면 클릭이 막힘!', date:'2026-04-14', pinned:false },
+  { id:26, title:'WorldEnvironment로 글로우 켜기', cat:'editor', steps:['씬에 WorldEnvironment 노드 추가','인스펙터 > Environment > [새 Environment] 클릭','Background > Mode를 "Canvas" 로 설정 (2D용)','Glow 섹션 펼치기 > Enabled = true 체크','Intensity를 1.0~2.0으로 설정 (번짐 세기)','Bloom을 0.1~0.5로 설정 (어느 밝기부터 빛날지)','반짝이게 할 스프라이트의 modulate를 1.0 이상으로 올리기','Color(1.5, 1.5, 1.0) 처럼 1.0 초과 값이 글로우 대상이 됨'], memo:'프로젝트 설정 > Rendering > Environment에서 Glow 기본 세팅도 확인', date:'2026-04-14', pinned:false },
+  { id:27, title:'피격 플래시 셰이더 세팅하기', cat:'editor', steps:['hit_flash.gdshader 파일 생성 (코드 스니펫 참고)','캐릭터 Sprite2D의 Material에 ShaderMaterial 적용','Shader에 hit_flash.gdshader 연결','인스펙터에서 flash_amount = 0, flash_color = 흰색 확인','여러 파츠(본체+무기 등)에 동시 적용하려면 CanvasGroup 사용','CanvasGroup의 Material에 셰이더를 적용하면 자식 전체가 하나로 합쳐져서 플래시','피격 시 GDScript에서 flash_amount를 1.0으로 올렸다가 Tween으로 0.0으로 내림'], memo:'CanvasGroup이 핵심! 없으면 각 파츠가 따로 플래시되어 이상해 보임', date:'2026-04-14', pinned:false },
 ];
+
+const TROUBLESHOOT_CATS = { collision:'충돌', movement:'이동', scene:'씬/데이터', ui:'UI', shader:'셰이더', etc:'기타' };
+
+const defaultTroubleshoot = [
+  { id:1, title:'캐릭터가 벽에 끼임', cat:'collision', symptom:'CharacterBody2D가 벽이나 모서리에 끼여서 안 빠져나옴', cause:'충돌 모양이 복잡하거나, 이동 속도가 너무 빨라 벽 안으로 파고들어감', solution:'CollisionShape2D를 CapsuleShape2D나 CircleShape2D처럼 둥근 모양으로 교체. 모서리가 뾰족한 RectangleShape2D는 끼기 쉬움. safe_margin 값을 올려보기 (0.08 → 0.2).', memo:'', date:'2026-04-14', pinned:false },
+  { id:2, title:'충돌이 감지 안 됨', cat:'collision', symptom:'Area2D나 CharacterBody2D끼리 부딪혀도 아무 반응이 없음', cause:'충돌 레이어/마스크가 잘못 설정됨. 또는 CollisionShape2D가 비활성화/없음', solution:'1) 두 노드의 Layer/Mask가 서로를 감지하도록 설정됐는지 확인. 2) CollisionShape2D가 자식으로 있는지 확인. 3) Area2D의 monitoring/monitorable이 켜져있는지 확인. 4) body_entered vs area_entered 시그널 구분 확인.', memo:'가장 흔한 실수! Layer는 "나는 누구", Mask는 "누구를 감지"', date:'2026-04-14', pinned:false },
+  { id:3, title:'씬 전환하면 데이터가 사라짐', cat:'scene', symptom:'change_scene_to_file() 후 이전 씬의 변수/데이터가 초기화됨', cause:'씬 전환 시 이전 씬의 노드가 전부 삭제됨. 일반 변수는 노드와 함께 소멸.', solution:'Autoload(싱글톤)에 유지할 데이터를 저장. 프로젝트 설정 > 자동 로드에 GameManager.gd 등록 후, 거기에 score, hp, inventory 등 저장.', memo:'Autoload는 씬이 바뀌어도 절대 파괴되지 않는 전역 노드', date:'2026-04-14', pinned:false },
+  { id:4, title:'캐릭터가 바닥을 뚫고 떨어짐', cat:'movement', symptom:'빠른 속도로 낙하하면 바닥을 관통해서 떨어짐', cause:'delta 기반 이동에서 한 프레임에 너무 많이 이동하여 충돌체를 건너뜀 (터널링)', solution:'1) velocity.y에 상한선 설정: velocity.y = min(velocity.y, 1000). 2) 프로젝트 설정 > Physics > 2D > Safe Margin 값 증가. 3) 극단적으로 빠르면 RayCast2D로 바닥 미리 감지.', memo:'max_fall_speed 변수를 만들어서 clamp하면 깔끔', date:'2026-04-14', pinned:false },
+  { id:5, title:'애니메이션이 안 바뀜/안 재생됨', cat:'movement', symptom:'play()를 호출해도 애니메이션이 안 바뀌거나, idle로 안 돌아옴', cause:'매 프레임 play()가 호출되면서 계속 첫 프레임으로 리셋됨. 또는 조건 분기가 겹침.', solution:'현재 애니메이션 체크 후 변경: if anim.animation != "walk": anim.play("walk"). 또는 상태머신으로 애니메이션 전환을 관리.', memo:'play()는 이미 재생 중이면 리셋하므로, 조건 체크 필수', date:'2026-04-14', pinned:false },
+  { id:6, title:'@onready 변수가 null', cat:'scene', symptom:'@onready var sprite = $Sprite2D 했는데 null 에러 발생', cause:'노드 이름이 다르거나, 노드가 아직 트리에 추가되지 않음. 또는 경로가 잘못됨.', solution:'1) 씬 트리에서 실제 노드 이름 확인 (대소문자 정확히). 2) $Sprite2D 대신 get_node("Sprite2D") 시도. 3) 노드 경로를 우클릭 > "노드 경로 복사"로 확인.', memo:'노드 이름에 공백이나 특수문자가 있으면 $"Node Name" 처럼 따옴표 사용', date:'2026-04-14', pinned:false },
+  { id:7, title:'시그널이 연결 안 됨 / 호출 안 됨', cat:'scene', symptom:'connect() 했는데 시그널 함수가 호출되지 않음', cause:'시그널 이름 오타, 함수 이름 불일치, 또는 연결 시점이 잘못됨', solution:'1) 에디터의 노드 탭에서 시그널 연결 상태 확인. 2) 코드 연결: signal_name.connect(함수) 형태 사용. 3) 함수 매개변수 개수가 시그널과 일치하는지 확인. 4) _ready()에서 연결했는지 확인.', memo:'Godot 4에서는 signal.connect(callable) 형태. 3.x의 connect("signal", self, "func")와 다름!', date:'2026-04-14', pinned:false },
+  { id:8, title:'UI가 카메라를 따라 움직임', cat:'ui', symptom:'HUD/메뉴가 카메라와 함께 이동해서 제자리에 안 있음', cause:'UI 노드가 CanvasLayer 없이 일반 노드 아래에 있어서 월드 좌표로 그려짐', solution:'CanvasLayer 노드 아래에 UI 노드들을 배치. CanvasLayer는 카메라와 무관하게 화면 좌표로 그려짐.', memo:'CanvasLayer의 layer 값으로 UI 순서 조절 가능', date:'2026-04-14', pinned:false },
+  { id:9, title:'pause 했는데 UI/메뉴도 멈춤', cat:'ui', symptom:'get_tree().paused = true 했더니 일시정지 메뉴 버튼도 안 눌림', cause:'기본적으로 모든 노드가 pause 영향을 받음', solution:'일시정지 메뉴 노드의 process_mode를 "Always"로 설정. 인스펙터 > Node > Process Mode > Always. 또는 코드에서 process_mode = Node.PROCESS_MODE_ALWAYS.', memo:'Always=항상 실행, Pausable=일시정지 시 멈춤(기본), Disabled=항상 멈춤', date:'2026-04-14', pinned:false },
+  { id:10, title:'셰이더가 안 보임 / 효과 없음', cat:'shader', symptom:'ShaderMaterial을 적용했는데 아무 변화 없음', cause:'셰이더 코드에 문법 오류가 있거나, uniform 값이 0이거나, COLOR 출력을 안 함', solution:'1) 출력 패널에서 셰이더 컴파일 에러 확인. 2) COLOR = texture(TEXTURE, UV); 기본 코드부터 시작. 3) uniform 값을 인스펙터에서 확인 (0이면 효과 없음). 4) 화면 효과는 hint_screen_texture 사용했는지 확인.', memo:'셰이더 에디터에서 빨간 줄이 뜨면 문법 오류. 세미콜론(;) 빼먹기 주의', date:'2026-04-14', pinned:false },
+  { id:11, title:'set_deferred 안 쓰면 에러', cat:'collision', symptom:'CollisionShape2D.disabled = true 하면 에러나 경고 발생', cause:'물리 프레임 도중에 충돌 속성을 직접 변경하면 충돌', solution:'set_deferred("disabled", true) 사용. 물리 프레임이 끝난 후 안전하게 변경됨. monitoring, monitorable도 마찬가지.', memo:'물리 관련 속성 변경은 거의 항상 set_deferred 사용이 안전', date:'2026-04-14', pinned:false },
+  { id:12, title:'FileAccess로 저장이 안 됨', cat:'scene', symptom:'res:// 경로에 파일을 저장하려는데 안 됨', cause:'res:// 는 프로젝트 리소스 폴더로 읽기 전용 (빌드 후 접근 불가)', solution:'user:// 경로를 사용. 예: FileAccess.open("user://save.json", FileAccess.WRITE). user://는 OS별 사용자 데이터 폴더에 저장됨.', memo:'user:// 실제 경로 확인: 프로젝트 > 사용자 데이터 폴더 열기', date:'2026-04-14', pinned:false },
+];
+
+const defaultRoadmap = [
+  { week:1, title:'프로젝트 셋업 & 캐릭터 이동', tasks:[
+    { text:'Godot 4 설치 및 새 프로젝트 생성', done:false, related:[] },
+    { text:'CharacterBody2D로 플레이어 캐릭터 만들기', done:false, related:['기본 캐릭터 이동 (2D)'] },
+    { text:'점프 + 중력 구현', done:false, related:['점프 (플랫포머)'] },
+    { text:'코요테 타임 & 점프 버퍼 추가', done:false, related:['코요테 타임 + 점프 버퍼'] },
+    { text:'캐릭터 스프라이트 애니메이션 설정', done:false, related:['스프라이트 애니메이션'] },
+    { text:'Input Map에 조작키 등록', done:false, related:[] },
+  ]},
+  { week:2, title:'레벨 디자인 & 카메라', tasks:[
+    { text:'TileMap으로 첫 번째 레벨 만들기', done:false, related:['TileMap으로 레벨 만들기'] },
+    { text:'Camera2D 설정 (추적, 제한)', done:false, related:['Camera2D 설정 (횡스크롤)'] },
+    { text:'패럴랙스 배경 추가', done:false, related:['패럴랙스 배경 (횡스크롤)'] },
+    { text:'벽 슬라이드 & 벽 점프 구현', done:false, related:['횡스크롤 이동 + 벽 슬라이드'] },
+    { text:'대시 이동 추가', done:false, related:['대시 이동'] },
+  ]},
+  { week:3, title:'전투 시스템 기초', tasks:[
+    { text:'HP 컴포넌트 만들기', done:false, related:['HP 시스템 + 피격/사망'] },
+    { text:'HitBox / HurtBox 패턴 구현', done:false, related:['HitBox / HurtBox 패턴'] },
+    { text:'충돌 레이어 설정', done:false, related:['HitBox/HurtBox 충돌 레이어 세팅'] },
+    { text:'피격 시 무적 시간 + 깜빡임', done:false, related:['무적 시간 (피격 후)'] },
+    { text:'피격 플래시 셰이더 적용', done:false, related:['셰이더: 피격 흰색 플래시'] },
+    { text:'카메라 쉐이크 구현', done:false, related:['카메라 흔들기 (화면 쉐이크)'] },
+  ]},
+  { week:4, title:'적 AI & 상태머신', tasks:[
+    { text:'상태머신 패턴 구현', done:false, related:['상태머신 (State Machine)'] },
+    { text:'적 캐릭터 씬 구성', done:false, related:['적 캐릭터 씬 구성하기'] },
+    { text:'순찰 → 추적 → 공격 AI', done:false, related:['적 AI (순찰 + 추적)'] },
+    { text:'적 처치 시 디졸브 효과', done:false, related:['셰이더: 디졸브 효과'] },
+  ]},
+  { week:5, title:'아이템 & 인벤토리', tasks:[
+    { text:'인벤토리 시스템 (Autoload)', done:false, related:['인벤토리 시스템'] },
+    { text:'아이템 줍기 (자동/키보드)', done:false, related:['아이템 줍기 (Area2D)', '키보드로 아이템 줍기 (F키)'] },
+    { text:'서랍/상자 조사 시스템', done:false, related:['조사 가능한 오브젝트 (서랍/상자)'] },
+    { text:'인벤토리 UI 만들기', done:false, related:['인벤토리 UI 만들기'] },
+    { text:'아이템 데이터베이스 구축', done:false, related:['아이템 데이터베이스(ItemDB) 만들기'] },
+    { text:'열쇠/잠긴 문 시스템', done:false, related:['열쇠/잠긴 문 시스템'] },
+  ]},
+  { week:6, title:'대화 & 스토리', tasks:[
+    { text:'기본 대화창 UI 구성', done:false, related:['기본 대화창 UI 구성하기'] },
+    { text:'대화 시스템 + 타이핑 효과', done:false, related:['기본 대화창 시스템'] },
+    { text:'선택지 분기 대화', done:false, related:['선택지 대화 (분기)'] },
+    { text:'NPC 상호작용 (E키)', done:false, related:['상호작용 시스템 (E키)'] },
+    { text:'스토리 플래그 관리', done:false, related:['단서/퍼즐 플래그 관리하기'] },
+    { text:'숨겨진 아이템/조건부 발견', done:false, related:['숨겨진 아이템 (조건부 발견)'] },
+  ]},
+  { week:7, title:'퍼즐 & 보스전', tasks:[
+    { text:'스위치 + 문 퍼즐 구현', done:false, related:['퍼즐: 스위치 + 문 연동'] },
+    { text:'보스전 (페이즈 전환)', done:false, related:['보스전 패턴 (페이즈)'] },
+    { text:'보스 HP바 UI', done:false, related:['보스 HP바 만들기'] },
+    { text:'컷씬 연출 (보스 등장)', done:false, related:['컷씬 연출 (순차 실행)'] },
+    { text:'화면 효과 (비네트, 셰이크)', done:false, related:['셰이더: 화면 비네트'] },
+  ]},
+  { week:8, title:'세이브 & 마무리', tasks:[
+    { text:'세이브/로드 시스템', done:false, related:['세이브/로드 시스템'] },
+    { text:'세이브 포인트 오브젝트', done:false, related:['세이브 포인트 만들기'] },
+    { text:'타이틀 화면 & 씬 전환', done:false, related:['씬 전환'] },
+    { text:'글로우/반짝임 효과 세팅', done:false, related:['셰이더: 글로우 (반짝임)'] },
+    { text:'사운드 효과 & BGM 추가', done:false, related:[] },
+    { text:'전체 플레이 테스트 & 버그 수정', done:false, related:[] },
+  ]},
+];
+
+// ── Related snippets map (auto-link between snippets) ──
+const RELATED_MAP = {
+  '기본 캐릭터 이동 (2D)': ['점프 (플랫포머)', '코요테 타임 + 점프 버퍼', '대시 이동', '횡스크롤 이동 + 벽 슬라이드'],
+  '점프 (플랫포머)': ['기본 캐릭터 이동 (2D)', '코요테 타임 + 점프 버퍼', '횡스크롤 이동 + 벽 슬라이드'],
+  'HP 시스템 + 피격/사망': ['HitBox / HurtBox 패턴', '무적 시간 (피격 후)', '셰이더: 피격 흰색 플래시', '보스전 패턴 (페이즈)'],
+  'HitBox / HurtBox 패턴': ['HP 시스템 + 피격/사망', '무적 시간 (피격 후)', '적 AI (순찰 + 추적)'],
+  '무적 시간 (피격 후)': ['HP 시스템 + 피격/사망', 'HitBox / HurtBox 패턴', '셰이더: 피격 흰색 플래시'],
+  '인벤토리 시스템': ['아이템 줍기 (Area2D)', '키보드로 아이템 줍기 (F키)', '조사 가능한 오브젝트 (서랍/상자)', '아이템 사용 (인벤토리)', '열쇠/잠긴 문 시스템'],
+  '아이템 줍기 (Area2D)': ['키보드로 아이템 줍기 (F키)', '클릭으로 아이템 줍기', '인벤토리 시스템'],
+  '기본 대화창 시스템': ['대화창 타이핑 효과 (Timer)', '선택지 대화 (분기)', '대화 데이터 (JSON 로드)', '대화창 등장/퇴장 애니메이션'],
+  '보스전 패턴 (페이즈)': ['HP 시스템 + 피격/사망', '카메라 흔들기 (화면 쉐이크)', '컷씬 연출 (순차 실행)', '셰이더: 화면 비네트'],
+  '세이브/로드 시스템': ['인벤토리 시스템', '숨겨진 아이템 (조건부 발견)'],
+  '상태머신 (State Machine)': ['적 AI (순찰 + 추적)', '스프라이트 애니메이션'],
+  '셰이더: 피격 흰색 플래시': ['HP 시스템 + 피격/사망', '무적 시간 (피격 후)', '셰이더: 디졸브 효과'],
+  '셰이더: 화면 비네트': ['셰이더: 화면 블러 (흐림)', '셰이더: 색수차 (불안 연출)', '보스전 패턴 (페이즈)'],
+  '퍼즐: 스위치 + 문 연동': ['열쇠/잠긴 문 시스템', '상호작용 시스템 (E키)'],
+};
 
 // ══════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════
 let state = { tab:'glossary', filter:'all', search:'', formOpen:false };
-let glossary, snippets, howto;
-let quizState = null; // { questions:[], current:0, score:0, answered:false, mode:'term2desc' }
+let glossary, snippets, howto, troubleshoot;
 
 function migrate(arr) {
   return arr.map(d => ({ ...d, status: d.status || 'unknown', pinned: d.pinned || false }));
 }
 
 function loadData() {
-  const saved = localStorage.getItem('godot-helper-v3');
+  const saved = localStorage.getItem('godot-helper-v4');
   if (saved) {
     try {
       const d = JSON.parse(saved);
       glossary = migrate(d.glossary || []);
       snippets = (d.snippets || []).map(s => ({ ...s, pinned: s.pinned || false }));
       howto = (d.howto || []).map(h => ({ ...h, pinned: h.pinned || false }));
+      troubleshoot = (d.troubleshoot || []).map(t => ({ ...t, pinned: t.pinned || false }));
       return;
     } catch(e) {}
   }
-  // try v2
-  const v2 = localStorage.getItem('godot-helper-v2');
-  if (v2) {
+  // try v3
+  const v3 = localStorage.getItem('godot-helper-v3');
+  if (v3) {
     try {
-      const d = JSON.parse(v2);
+      const d = JSON.parse(v3);
       glossary = migrate(d.glossary || defaultGlossary.slice());
       snippets = (d.snippets || defaultSnippets.slice()).map(s => ({ ...s, pinned: s.pinned || false }));
       howto = (d.howto || defaultHowto.slice()).map(h => ({ ...h, pinned: h.pinned || false }));
+      troubleshoot = defaultTroubleshoot.map(d => ({...d}));
       saveData();
       return;
     } catch(e) {}
@@ -502,10 +636,11 @@ function loadData() {
   glossary = defaultGlossary.map(d => ({...d}));
   snippets = defaultSnippets.map(d => ({...d}));
   howto = defaultHowto.map(d => ({...d}));
+  troubleshoot = defaultTroubleshoot.map(d => ({...d}));
 }
 
 function saveData() {
-  localStorage.setItem('godot-helper-v3', JSON.stringify({ glossary, snippets, howto }));
+  localStorage.setItem('godot-helper-v4', JSON.stringify({ glossary, snippets, howto, troubleshoot }));
 }
 loadData();
 
@@ -515,8 +650,8 @@ loadData();
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function today() { return new Date().toISOString().slice(0,10); }
 function nextId(arr) { return Math.max(0,...arr.map(d=>d.id))+1; }
-function getCurrentData() { if(state.tab==='glossary') return glossary; if(state.tab==='snippets') return snippets; return howto; }
-function getCats() { if(state.tab==='glossary') return GLOSSARY_CATS; if(state.tab==='snippets') return SNIPPET_CATS; return HOWTO_CATS; }
+function getCurrentData() { if(state.tab==='glossary') return glossary; if(state.tab==='snippets') return snippets; if(state.tab==='troubleshoot') return troubleshoot; return howto; }
+function getCats() { if(state.tab==='glossary') return GLOSSARY_CATS; if(state.tab==='snippets') return SNIPPET_CATS; if(state.tab==='troubleshoot') return TROUBLESHOOT_CATS; return HOWTO_CATS; }
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
 
 function copyCode(btn) {
@@ -561,20 +696,20 @@ function sortItems(arr) {
 //  RENDERING
 // ══════════════════════════════════════
 function renderTabs() {
-  const counts = { glossary:glossary.length, snippets:snippets.length, howto:howto.length, quiz:glossary.length };
+  const counts = { glossary:glossary.length, snippets:snippets.length, howto:howto.length, troubleshoot:troubleshoot.length, roadmap:'' };
   document.getElementById('tabBar').innerHTML = TABS.map(t => `
     <button class="tab-btn ${state.tab===t.id?'active':''}" onclick="switchTab('${t.id}')">
       <span class="tab-icon">${t.icon}</span>${t.label}
-      ${t.id!=='quiz' ? `<span class="tab-count">${counts[t.id]}</span>` : ''}
+      ${counts[t.id]!=='' ? `<span class="tab-count">${counts[t.id]}</span>` : ''}
     </button>
   `).join('');
 }
 
 function renderToolbar() {
-  if (state.tab === 'quiz') { document.getElementById('toolbar').innerHTML = ''; return; }
+  if (state.tab === 'roadmap') { document.getElementById('toolbar').innerHTML = ''; return; }
   const cats = getCats();
-  const ph = { glossary:'용어 또는 설명 검색...', snippets:'코드 또는 설명 검색...', howto:'가이드 검색...' };
-  const al = { glossary:'+ 용어 추가', snippets:'+ 코드 추가', howto:'+ 가이드 추가' };
+  const ph = { glossary:'용어 또는 설명 검색...', snippets:'코드 또는 설명 검색...', howto:'가이드 검색...', troubleshoot:'증상 또는 해결법 검색...' };
+  const al = { glossary:'+ 용어 추가', snippets:'+ 코드 추가', howto:'+ 가이드 추가', troubleshoot:'+ 문제 추가' };
   const statusFilter = state.tab === 'glossary' ? `
     <button class="filter-btn ${state.filter==='pinned'?'active':''}" onclick="setFilter('pinned')">📌 즐겨찾기</button>
     <button class="filter-btn ${state.filter==='unsure'?'active':''}" onclick="setFilter('unsure')">헷갈림</button>
@@ -602,7 +737,7 @@ function renderToolbar() {
 
 function renderForm() {
   const area = document.getElementById('formArea');
-  if (!state.formOpen || state.tab === 'quiz') { area.innerHTML=''; return; }
+  if (!state.formOpen || state.tab === 'roadmap') { area.innerHTML=''; return; }
   const cats = getCats();
   const opts = Object.entries(cats).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
 
@@ -619,6 +754,14 @@ function renderForm() {
       <div class="form-row single"><div class="form-group"><label>설명</label><textarea id="fDesc" rows="2" placeholder="이 코드가 하는 일..."></textarea></div></div>
       <div class="form-row single"><div class="form-group"><label>내 메모 (선택)</label><textarea id="fMemo" rows="2" placeholder="주의사항, 변형 팁 등..."></textarea></div></div>
       <div class="form-actions"><button class="btn-cancel" onclick="toggleForm()">취소</button><button class="btn-save" onclick="saveNew()">저장하기</button></div></div>`;
+  } else if (state.tab === 'troubleshoot') {
+    area.innerHTML = `<div class="form-panel"><h3>// 새 문제 등록</h3>
+      <div class="form-row"><div class="form-group"><label>제목 *</label><input type="text" id="fTitle" placeholder="예: 캐릭터가 벽에 끼임"></div><div class="form-group"><label>카테고리 *</label><select id="fCat">${opts}</select></div></div>
+      <div class="form-row single"><div class="form-group"><label>증상 *</label><textarea id="fSymptom" rows="2" placeholder="어떤 문제가 발생하는지..."></textarea></div></div>
+      <div class="form-row single"><div class="form-group"><label>원인</label><textarea id="fCause" rows="2" placeholder="왜 이 문제가 발생하는지..."></textarea></div></div>
+      <div class="form-row single"><div class="form-group"><label>해결법 *</label><textarea id="fSolution" rows="3" placeholder="어떻게 해결하는지..."></textarea></div></div>
+      <div class="form-row single"><div class="form-group"><label>내 메모 (선택)</label><textarea id="fMemo" rows="2" placeholder="추가 팁..."></textarea></div></div>
+      <div class="form-actions"><button class="btn-cancel" onclick="toggleForm()">취소</button><button class="btn-save" onclick="saveNew()">저장하기</button></div></div>`;
   } else {
     area.innerHTML = `<div class="form-panel"><h3>// 새 가이드 등록</h3>
       <div class="form-row"><div class="form-group"><label>제목 *</label><input type="text" id="fTitle" placeholder="예: 새 프로젝트 만들기"></div><div class="form-group"><label>카테고리 *</label><select id="fCat">${opts}</select></div></div>
@@ -629,7 +772,7 @@ function renderForm() {
 }
 
 function renderCards() {
-  if (state.tab === 'quiz') return;
+  if (state.tab === 'roadmap') return;
   const data = getCurrentData();
   const cats = getCats();
   const q = state.search.toLowerCase().trim();
@@ -643,6 +786,7 @@ function renderCards() {
     if (q) {
       if (state.tab==='glossary') matchQ = d.term.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q)||(d.memo||'').toLowerCase().includes(q);
       else if (state.tab==='snippets') matchQ = d.title.toLowerCase().includes(q)||d.code.toLowerCase().includes(q)||(d.desc||'').toLowerCase().includes(q)||(d.memo||'').toLowerCase().includes(q);
+      else if (state.tab==='troubleshoot') matchQ = d.title.toLowerCase().includes(q)||d.symptom.toLowerCase().includes(q)||(d.solution||'').toLowerCase().includes(q)||(d.cause||'').toLowerCase().includes(q);
       else matchQ = d.title.toLowerCase().includes(q)||d.steps.join(' ').toLowerCase().includes(q)||(d.memo||'').toLowerCase().includes(q);
     }
     return matchCat && matchQ;
@@ -652,14 +796,14 @@ function renderCards() {
 
   const grid=document.getElementById('cardsGrid'), empty=document.getElementById('emptyState');
   const label=document.getElementById('sectionLabel'), total=document.getElementById('totalCount');
-  const allTotal = glossary.length+snippets.length+howto.length;
+  const allTotal = glossary.length+snippets.length+howto.length+troubleshoot.length;
   total.textContent = allTotal;
   label.textContent = `${filtered.length}개 표시 중`;
 
   if (!filtered.length) {
     grid.innerHTML='';
-    const icons={glossary:'📖',snippets:'💻',howto:'🖱️'};
-    const msgs={glossary:'등록된 용어가 없습니다.<br><strong>+ 용어 추가</strong> 버튼으로 추가해보세요!',snippets:'등록된 코드 스니펫이 없습니다.<br><strong>+ 코드 추가</strong> 버튼으로 추가해보세요!',howto:'등록된 가이드가 없습니다.<br><strong>+ 가이드 추가</strong> 버튼으로 추가해보세요!'};
+    const icons={glossary:'📖',snippets:'💻',howto:'🖱️',troubleshoot:'🔧'};
+    const msgs={glossary:'등록된 용어가 없습니다.<br><strong>+ 용어 추가</strong> 버튼으로 추가해보세요!',snippets:'등록된 코드 스니펫이 없습니다.<br><strong>+ 코드 추가</strong> 버튼으로 추가해보세요!',howto:'등록된 가이드가 없습니다.<br><strong>+ 가이드 추가</strong> 버튼으로 추가해보세요!',troubleshoot:'등록된 문제가 없습니다.<br><strong>+ 문제 추가</strong> 버튼으로 추가해보세요!'};
     document.getElementById('emptyIcon').textContent=icons[state.tab];
     document.getElementById('emptyMsg').innerHTML=msgs[state.tab];
     empty.style.display='block'; return;
@@ -687,7 +831,10 @@ function renderCards() {
       </div>`;
     }).join('');
   } else if (state.tab==='snippets') {
-    grid.innerHTML = filtered.map(d => `<div class="card ${d.pinned?'pinned':''}">
+    grid.innerHTML = filtered.map(d => {
+      const related = RELATED_MAP[d.title] || [];
+      const relatedHtml = related.length ? `<div class="related-links">${related.map(r=>`<span class="related-link" onclick="searchSnippet('${esc(r)}')">${esc(r)}</span>`).join('')}</div>` : '';
+      return `<div class="card ${d.pinned?'pinned':''}">
       <div class="card-top">
         <div class="card-term">${esc(d.title)}</div>
         <div class="card-actions">
@@ -699,6 +846,25 @@ function renderCards() {
       <span class="tag tag-${d.cat}">${cats[d.cat]||d.cat}</span>
       ${d.desc?`<div class="card-desc">${esc(d.desc)}</div>`:''}
       <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">복사</button><pre>${highlightGD(d.code)}</pre></div>
+      ${d.memo?`<div class="card-memo">${esc(d.memo)}</div>`:''}
+      ${relatedHtml}
+      <div class="card-date">${d.date}</div>
+    </div>`;
+    }).join('');
+  } else if (state.tab==='troubleshoot') {
+    grid.innerHTML = filtered.map(d => `<div class="card ${d.pinned?'pinned':''}">
+      <div class="card-top">
+        <div class="card-term">${esc(d.title)}</div>
+        <div class="card-actions">
+          <button class="icon-btn pin ${d.pinned?'active':''}" onclick="togglePin(${d.id})" title="즐겨찾기">📌</button>
+          <button class="icon-btn" onclick="openEdit(${d.id})" title="수정">✏️</button>
+          <button class="icon-btn del" onclick="deleteEntry(${d.id})" title="삭제">🗑</button>
+        </div>
+      </div>
+      <span class="tag tag-${d.cat}">${cats[d.cat]||d.cat}</span>
+      <div class="ts-symptom">${esc(d.symptom)}</div>
+      ${d.cause?`<div class="ts-cause">${esc(d.cause)}</div>`:''}
+      <div class="ts-solution">${esc(d.solution)}</div>
       ${d.memo?`<div class="card-memo">${esc(d.memo)}</div>`:''}
       <div class="card-date">${d.date}</div>
     </div>`).join('');
@@ -720,17 +886,24 @@ function renderCards() {
   }
 }
 
+function searchSnippet(title) {
+  state.tab = 'snippets';
+  state.filter = 'all';
+  state.search = title;
+  renderAll();
+}
+
 function renderAll() {
   renderTabs(); renderToolbar(); renderForm(); renderCards();
-  document.getElementById('mainContent').style.display = state.tab==='quiz'?'none':'block';
-  document.getElementById('quizArea').style.display = state.tab==='quiz'?'block':'none';
-  if (state.tab==='quiz' && !quizState) renderQuizSetup();
+  document.getElementById('mainContent').style.display = state.tab==='roadmap'?'none':'block';
+  document.getElementById('roadmapArea').style.display = state.tab==='roadmap'?'block':'none';
+  if (state.tab==='roadmap') renderRoadmap();
 }
 
 // ══════════════════════════════════════
 //  ACTIONS
 // ══════════════════════════════════════
-function switchTab(tab) { state.tab=tab; state.filter='all'; state.search=''; state.formOpen=false; if(tab!=='quiz') quizState=null; renderAll(); }
+function switchTab(tab) { state.tab=tab; state.filter='all'; state.search=''; state.formOpen=false; renderAll(); }
 function setFilter(cat) { state.filter=cat; renderToolbar(); renderCards(); }
 function toggleForm() { state.formOpen=!state.formOpen; renderForm(); if(state.formOpen){ const f=document.querySelector('.form-panel input[type="text"]'); if(f)f.focus(); } }
 
@@ -746,6 +919,13 @@ function saveNew() {
     const desc=(document.getElementById('fDesc')?.value||'').trim();
     if(!title||!code){ alert('제목과 코드는 필수입니다.'); return; }
     snippets.unshift({ id:nextId(snippets), title, cat, code, desc, memo, date:today(), pinned:false });
+  } else if(state.tab==='troubleshoot') {
+    const title=document.getElementById('fTitle').value.trim();
+    const symptom=document.getElementById('fSymptom').value.trim();
+    const cause=(document.getElementById('fCause')?.value||'').trim();
+    const solution=document.getElementById('fSolution').value.trim();
+    if(!title||!symptom||!solution){ alert('제목, 증상, 해결법은 필수입니다.'); return; }
+    troubleshoot.unshift({ id:nextId(troubleshoot), title, cat, symptom, cause, solution, memo, date:today(), pinned:false });
   } else {
     const title=document.getElementById('fTitle').value.trim(), stepsRaw=document.getElementById('fSteps').value.trim();
     if(!title||!stepsRaw){ alert('제목과 단계는 필수입니다.'); return; }
@@ -758,6 +938,7 @@ function deleteEntry(id) {
   if(!confirm('이 항목을 삭제할까요?')) return;
   if(state.tab==='glossary') glossary=glossary.filter(d=>d.id!==id);
   else if(state.tab==='snippets') snippets=snippets.filter(d=>d.id!==id);
+  else if(state.tab==='troubleshoot') troubleshoot=troubleshoot.filter(d=>d.id!==id);
   else howto=howto.filter(d=>d.id!==id);
   saveData(); showToast('삭제되었습니다'); renderAll();
 }
@@ -795,6 +976,14 @@ function openEdit(id) {
       <div class="form-row single"><div class="form-group"><label>설명</label><textarea id="eDesc" rows="2">${esc(d.desc||'')}</textarea></div></div>
       <div class="form-row single"><div class="form-group"><label>내 메모</label><textarea id="eMemo" rows="2">${esc(d.memo||'')}</textarea></div></div>
       <div class="form-actions"><button class="btn-cancel" onclick="document.getElementById('editOverlay').classList.remove('open')">취소</button><button class="btn-save" onclick="updateEntry(${d.id})">수정 완료</button></div>`;
+  } else if(state.tab==='troubleshoot') {
+    modal.innerHTML=`<h3>// 문제 수정</h3>
+      <div class="form-row"><div class="form-group"><label>제목</label><input type="text" id="eTitle" value="${esc(d.title)}"></div><div class="form-group"><label>카테고리</label><select id="eCat">${opts}</select></div></div>
+      <div class="form-row single"><div class="form-group"><label>증상</label><textarea id="eSymptom" rows="2">${esc(d.symptom)}</textarea></div></div>
+      <div class="form-row single"><div class="form-group"><label>원인</label><textarea id="eCause" rows="2">${esc(d.cause||'')}</textarea></div></div>
+      <div class="form-row single"><div class="form-group"><label>해결법</label><textarea id="eSolution" rows="3">${esc(d.solution)}</textarea></div></div>
+      <div class="form-row single"><div class="form-group"><label>내 메모</label><textarea id="eMemo" rows="2">${esc(d.memo||'')}</textarea></div></div>
+      <div class="form-actions"><button class="btn-cancel" onclick="document.getElementById('editOverlay').classList.remove('open')">취소</button><button class="btn-save" onclick="updateEntry(${d.id})">수정 완료</button></div>`;
   } else {
     modal.innerHTML=`<h3>// 가이드 수정</h3>
       <div class="form-row"><div class="form-group"><label>제목</label><input type="text" id="eTitle" value="${esc(d.title)}"></div><div class="form-group"><label>카테고리</label><select id="eCat">${opts}</select></div></div>
@@ -818,6 +1007,13 @@ function updateEntry(id) {
     const title=document.getElementById('eTitle').value.trim(), code=document.getElementById('eCode').value.trim();
     if(!title||!code){ alert('제목과 코드는 필수입니다.'); return; }
     d.title=title; d.cat=cat; d.code=code; d.desc=(document.getElementById('eDesc')?.value||'').trim(); d.memo=memo;
+  } else if(state.tab==='troubleshoot') {
+    const d=troubleshoot.find(x=>x.id===id); if(!d) return;
+    const title=document.getElementById('eTitle').value.trim();
+    const symptom=document.getElementById('eSymptom').value.trim();
+    const solution=document.getElementById('eSolution').value.trim();
+    if(!title||!symptom||!solution){ alert('제목, 증상, 해결법은 필수입니다.'); return; }
+    d.title=title; d.cat=cat; d.symptom=symptom; d.cause=(document.getElementById('eCause')?.value||'').trim(); d.solution=solution; d.memo=memo;
   } else {
     const d=howto.find(x=>x.id===id); if(!d) return;
     const title=document.getElementById('eTitle').value.trim(), stepsRaw=document.getElementById('eSteps').value.trim();
@@ -829,7 +1025,7 @@ function updateEntry(id) {
 
 function resetData() {
   if(!confirm('모든 데이터를 초기 상태로 되돌릴까요?\n직접 추가한 항목은 삭제됩니다.')) return;
-  glossary=defaultGlossary.map(d=>({...d})); snippets=defaultSnippets.map(d=>({...d})); howto=defaultHowto.map(d=>({...d}));
+  glossary=defaultGlossary.map(d=>({...d})); snippets=defaultSnippets.map(d=>({...d})); howto=defaultHowto.map(d=>({...d})); troubleshoot=defaultTroubleshoot.map(d=>({...d}));
   saveData(); showToast('초기화 완료'); renderAll();
 }
 
@@ -837,7 +1033,7 @@ function resetData() {
 //  EXPORT / IMPORT
 // ══════════════════════════════════════
 function exportData() {
-  const blob = new Blob([JSON.stringify({ glossary, snippets, howto }, null, 2)], { type:'application/json' });
+  const blob = new Blob([JSON.stringify({ glossary, snippets, howto, troubleshoot }, null, 2)], { type:'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = `godot-helper-backup-${today()}.json`; a.click();
@@ -852,10 +1048,11 @@ function importData(e) {
   reader.onload = function(ev) {
     try {
       const d = JSON.parse(ev.target.result);
-      if(!d.glossary && !d.snippets && !d.howto) throw new Error('invalid');
+      if(!d.glossary && !d.snippets && !d.howto && !d.troubleshoot) throw new Error('invalid');
       if(d.glossary) glossary = migrate(d.glossary);
       if(d.snippets) snippets = d.snippets.map(s=>({...s, pinned:s.pinned||false}));
       if(d.howto) howto = d.howto.map(h=>({...h, pinned:h.pinned||false}));
+      if(d.troubleshoot) troubleshoot = d.troubleshoot.map(t=>({...t, pinned:t.pinned||false}));
       saveData(); showToast('✓ 불러오기 완료'); renderAll();
     } catch(err) { alert('올바른 JSON 파일이 아닙니다.'); }
   };
@@ -864,126 +1061,67 @@ function importData(e) {
 }
 
 // ══════════════════════════════════════
-//  QUIZ MODE
+//  ROADMAP
 // ══════════════════════════════════════
-function renderQuizSetup() {
-  const area = document.getElementById('quizArea');
-  const total = glossary.length;
-  const unsure = glossary.filter(d=>d.status==='unsure').length;
-  const unknown = glossary.filter(d=>d.status==='unknown').length;
+function getRoadmapProgress() {
+  return JSON.parse(localStorage.getItem('godot-roadmap-v1') || 'null') || defaultRoadmap.map(w => w.tasks.map(t => t.done));
+}
 
-  area.innerHTML = `<div class="quiz-container">
-    <div class="quiz-card">
-      <div class="quiz-label">퀴즈 모드</div>
-      <div class="quiz-term" style="font-size:20px; margin-bottom:16px;">용어장에 등록된 ${total}개의 용어로<br>퀴즈를 풀어보세요!</div>
-      <div style="margin-bottom:24px; font-size:12px; color:var(--muted);">
-        모름 ${unknown}개 · 헷갈림 ${unsure}개 · 이해함 ${total-unknown-unsure}개
-      </div>
-      <div class="quiz-options" style="gap:12px;">
-        <div class="quiz-opt" onclick="startQuiz('all','term2desc')" style="text-align:center;">
-          <strong>전체 용어</strong> — 용어 보고 설명 맞추기 (${total}문제)
+function saveRoadmapProgress(progress) {
+  localStorage.setItem('godot-roadmap-v1', JSON.stringify(progress));
+}
+
+function renderRoadmap() {
+  const area = document.getElementById('roadmapArea');
+  const progress = getRoadmapProgress();
+  const totalTasks = defaultRoadmap.reduce((s,w) => s + w.tasks.length, 0);
+  const doneTasks = progress.reduce((s,w) => s + w.filter(Boolean).length, 0);
+  const totalPct = Math.round((doneTasks/totalTasks)*100);
+
+  area.innerHTML = `<div class="roadmap-container">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-size:14px;color:var(--ink);">전체 진행률 <strong style="color:var(--godot-blue);">${totalPct}%</strong> <span style="font-size:11px;color:var(--muted);">(${doneTasks}/${totalTasks})</span></div>
+      <button class="tool-btn danger" onclick="if(confirm('로드맵 진행률을 초기화할까요?')){localStorage.removeItem('godot-roadmap-v1');renderRoadmap();showToast('로드맵 초기화 완료');}">↺ 진행률 초기화</button>
+    </div>
+    <div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-bottom:24px;">
+      <div style="height:100%;width:${totalPct}%;background:var(--godot-blue);border-radius:4px;transition:width 0.3s;"></div>
+    </div>
+    ${defaultRoadmap.map((week, wi) => {
+      const weekDone = progress[wi] ? progress[wi].filter(Boolean).length : 0;
+      const weekTotal = week.tasks.length;
+      const weekPct = Math.round((weekDone/weekTotal)*100);
+      const isComplete = weekDone === weekTotal;
+      return `<div class="roadmap-week" style="${isComplete?'border-color:var(--accent-green);':''}">
+        <div class="roadmap-week-header" onclick="this.nextElementSibling.classList.toggle('open')">
+          <div class="roadmap-week-title">
+            <span>${isComplete?'✅':'📅'} ${wi+1}주차</span> ${esc(week.title)}
+          </div>
+          <div class="roadmap-week-progress">
+            ${weekDone}/${weekTotal}
+            <div class="roadmap-mini-bar"><div class="roadmap-mini-fill" style="width:${weekPct}%;${isComplete?'background:var(--accent-green);':''}"></div></div>
+          </div>
         </div>
-        <div class="quiz-opt" onclick="startQuiz('all','desc2term')" style="text-align:center;">
-          <strong>전체 용어</strong> — 설명 보고 용어 맞추기 (${total}문제)
+        <div class="roadmap-tasks${wi===0?' open':''}">
+          ${week.tasks.map((task, ti) => {
+            const checked = progress[wi] && progress[wi][ti];
+            const relatedHtml = task.related.length ? task.related.map(r => `<span class="task-related" onclick="event.stopPropagation();searchSnippet('${r}')">→ ${r}</span>`).join(' ') : '';
+            return `<div class="roadmap-task${checked?' done':''}">
+              <input type="checkbox" ${checked?'checked':''} onchange="toggleRoadmapTask(${wi},${ti},this.checked)" id="rt_${wi}_${ti}">
+              <label for="rt_${wi}_${ti}">${esc(task.text)} ${relatedHtml}</label>
+            </div>`;
+          }).join('')}
         </div>
-        ${(unknown+unsure)>=4 ? `<div class="quiz-opt" onclick="startQuiz('weak','term2desc')" style="text-align:center; border-color:var(--accent-orange);">
-          <strong>약점 공략</strong> — 모름 + 헷갈림만 (${unknown+unsure}문제)
-        </div>` : `<div class="quiz-opt disabled" style="text-align:center; opacity:0.4; cursor:default;">
-          <strong>약점 공략</strong> — 모름/헷갈림이 4개 이상이어야 합니다
-        </div>`}
-      </div>
-    </div>
+      </div>`;
+    }).join('')}
   </div>`;
 }
 
-function startQuiz(scope, mode) {
-  let pool = scope==='weak' ? glossary.filter(d=>d.status!=='known') : [...glossary];
-  if(pool.length < 4) { alert('퀴즈를 시작하려면 최소 4개의 용어가 필요합니다.'); return; }
-  // shuffle
-  for(let i=pool.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
-
-  const questions = pool.map(q => {
-    const others = glossary.filter(g=>g.id!==q.id);
-    for(let i=others.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [others[i],others[j]]=[others[j],others[i]]; }
-    const wrongChoices = others.slice(0,3);
-    const options = [...wrongChoices, q];
-    for(let i=options.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [options[i],options[j]]=[options[j],options[i]]; }
-    return { item:q, options, correctId:q.id };
-  });
-
-  quizState = { questions, current:0, score:0, answered:false, mode };
-  renderQuiz();
-}
-
-function renderQuiz() {
-  const area = document.getElementById('quizArea');
-  const qs = quizState;
-  if(qs.current >= qs.questions.length) { renderQuizResult(); return; }
-
-  const q = qs.questions[qs.current];
-  const pct = Math.round((qs.current/qs.questions.length)*100);
-  const prompt = qs.mode==='term2desc' ? q.item.term : q.item.desc;
-  const promptLabel = qs.mode==='term2desc' ? '이 용어의 설명은?' : '이 설명에 해당하는 용어는?';
-
-  area.innerHTML = `<div class="quiz-container">
-    <div class="quiz-progress">
-      <span>${qs.current+1} / ${qs.questions.length}</span>
-      <div class="quiz-bar"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
-      <span>맞힘 ${qs.score}</span>
-    </div>
-    <div class="quiz-card">
-      <div class="quiz-label">${promptLabel}</div>
-      <div class="quiz-term">${esc(prompt)}</div>
-      <div class="quiz-options">
-        ${q.options.map(o => {
-          const label = qs.mode==='term2desc' ? o.desc : o.term;
-          return `<div class="quiz-opt" data-id="${o.id}" onclick="answerQuiz(${o.id})">${esc(label)}</div>`;
-        }).join('')}
-      </div>
-    </div>
-  </div>`;
-}
-
-function answerQuiz(selectedId) {
-  if(quizState.answered) return;
-  quizState.answered = true;
-  const q = quizState.questions[quizState.current];
-  const correct = selectedId === q.correctId;
-  if(correct) quizState.score++;
-
-  // update learning status
-  const g = glossary.find(x=>x.id===q.correctId);
-  if(g) { g.status = correct ? 'known' : 'unsure'; saveData(); }
-
-  document.querySelectorAll('.quiz-opt').forEach(el => {
-    const id = parseInt(el.dataset.id);
-    if(id === q.correctId) el.classList.add('correct');
-    else if(id === selectedId && !correct) el.classList.add('wrong');
-    el.classList.add('disabled');
-  });
-
-  setTimeout(() => {
-    quizState.current++;
-    quizState.answered = false;
-    renderQuiz();
-  }, 1200);
-}
-
-function renderQuizResult() {
-  const qs = quizState;
-  const pct = Math.round((qs.score/qs.questions.length)*100);
-  const emoji = pct>=80 ? '🎉' : pct>=50 ? '💪' : '📚';
-  document.getElementById('quizArea').innerHTML = `<div class="quiz-container">
-    <div class="quiz-result">
-      <div style="font-size:48px; margin-bottom:16px;">${emoji}</div>
-      <div class="quiz-score">${pct}%</div>
-      <div class="quiz-score-label">${qs.questions.length}문제 중 ${qs.score}개 정답</div>
-      <div class="quiz-actions">
-        <button class="btn-save" onclick="quizState=null;renderQuizSetup()">다시 도전</button>
-        <button class="btn-cancel" onclick="switchTab('glossary')">용어장으로</button>
-      </div>
-    </div>
-  </div>`;
+function toggleRoadmapTask(weekIdx, taskIdx, checked) {
+  const progress = getRoadmapProgress();
+  if (!progress[weekIdx]) progress[weekIdx] = defaultRoadmap[weekIdx].tasks.map(() => false);
+  progress[weekIdx][taskIdx] = checked;
+  saveRoadmapProgress(progress);
+  renderRoadmap();
 }
 
 // ══════════════════════════════════════
