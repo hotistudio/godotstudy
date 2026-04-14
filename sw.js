@@ -1,4 +1,5 @@
 const CACHE_NAME = 'godot-helper-v5';
+// updated: 2026-04-15T23:00:00Z
 const ASSETS = [
   './',
   './index.html',
@@ -27,22 +28,21 @@ self.addEventListener('activate', event => {
   );
 });
 
-// 요청 가로채기: 캐시 우선, 없으면 네트워크
+// 요청 가로채기: 네트워크 우선, 실패 시 캐시 (항상 최신 버전 우선)
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(cached => {
-        if (cached) return cached;
-        return fetch(event.request).then(response => {
-          // 유효한 응답만 캐싱
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
+    fetch(event.request)
+      .then(response => {
+        // 네트워크 성공 → 캐시 업데이트 후 반환
+        if (response && response.status === 200 && response.type === 'basic') {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          return response;
-        });
+        }
+        return response;
       })
-      .catch(() => caches.match('./index.html'))
+      .catch(() => {
+        // 오프라인 → 캐시에서 반환
+        return caches.match(event.request).then(cached => cached || caches.match('./index.html'));
+      })
   );
 });
