@@ -1221,26 +1221,40 @@ document.getElementById('tabBar').addEventListener('wheel', function(e) {
 }, { passive: false });
 
 // ── Service Worker 등록 (강제 갱신) ──
+// ✅ 버전을 올릴 때 SW_VERSION만 변경하면 sw-core.js가 강제 갱신됩니다.
+// sw.js는 껍데기이므로 GitHub Pages 캐시(max-age=600)의 영향을 받지 않습니다.
+const SW_VERSION = '1.0.0';
+
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+  // sw.js 안의 importScripts 버전을 동적으로 주입
+  const swContent = `importScripts('./sw-core.js?v=${SW_VERSION}');`;
+  const swBlob = new Blob([swContent], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(swBlob);
+
+  navigator.serviceWorker.register(swUrl, { updateViaCache: 'none' })
     .then(reg => {
-      // 즉시 업데이트 체크
       reg.update();
-      // 새 SW 설치 감지
       reg.addEventListener('updatefound', () => {
         const newSW = reg.installing;
         newSW.addEventListener('statechange', () => {
-          // waiting = 설치 완료, 이전 SW 교체 대기 중
           if (newSW.state === 'waiting') {
-            newSW.postMessage('skipWaiting'); // 즉시 활성화 요청
+            newSW.postMessage('skipWaiting');
           }
         });
       });
     })
-    .catch(() => {});
+    .catch(() => {
+      // Blob URL 실패 시 일반 방식으로 폴백
+      navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+        .then(reg => reg.update())
+        .catch(() => {});
+    });
 
   // SW 교체 완료 시 페이지 새로고침 → 새 버전 적용
+  let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloading) return;
+    reloading = true;
     window.location.reload();
   });
 }
