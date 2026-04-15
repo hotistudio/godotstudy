@@ -1226,17 +1226,23 @@ if ('serviceWorker' in navigator) {
     .then(reg => {
       // 즉시 업데이트 체크
       reg.update();
-      // 새 SW가 대기 중이면 바로 활성화
+      // 새 SW 설치 감지
       reg.addEventListener('updatefound', () => {
         const newSW = reg.installing;
         newSW.addEventListener('statechange', () => {
-          if (newSW.state === 'activated') {
-            console.log('서비스워커 갱신 완료');
+          // waiting = 설치 완료, 이전 SW 교체 대기 중
+          if (newSW.state === 'waiting') {
+            newSW.postMessage('skipWaiting'); // 즉시 활성화 요청
           }
         });
       });
     })
     .catch(() => {});
+
+  // SW 교체 완료 시 페이지 새로고침 → 새 버전 적용
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
 }
 </script>
 </body>
