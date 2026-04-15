@@ -1,48 +1,44 @@
-const CACHE_NAME = 'godot-helper-v5';
-// updated: 2026-04-15T23:59:00Z
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json'
-];
+// godot-helper sw.js - updated: 1776253611
+const CACHE = 'godot-helper-1776253611';
+const CORE = ['./', './index.html', './manifest.json'];
 
-// 설치: 핵심 파일 캐싱
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ASSETS))
-      .then(() => self.skipWaiting())
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)));
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+  ));
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+
+  // navigate 요청 (페이지 이동): 캐시 우선, 없으면 네트워크
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || fetch(e.request))
+    );
+    return;
+  }
+
+  // 그 외 리소스: stale-while-revalidate (캐시 즉시 반환 + 백그라운드 갱신)
+  e.respondWith(
+    caches.open(CACHE).then(cache =>
+      cache.match(e.request).then(cached => {
+        const fp = fetch(e.request).then(res => {
+          if (res && res.status === 200) cache.put(e.request, res.clone());
+          return res;
+        }).catch(() => null);
+        return cached || fp;
+      })
+    )
   );
 });
 
-// 활성화: 이전 버전 캐시 삭제
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
-  );
-});
-
-// 요청 가로채기: 네트워크 우선, 실패 시 캐시 (항상 최신 버전 우선)
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // 네트워크 성공 → 캐시 업데이트 후 반환
-        if (response && response.status === 200 && response.type === 'basic') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        }
-        return response;
-      })
-      .catch(() => {
-        // 오프라인 → 캐시에서 반환
-        return caches.match(event.request).then(cached => cached || caches.match('./index.html'));
-      })
-  );
+self.addEventListener('message', e => {
+  if (e.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
