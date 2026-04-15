@@ -17,15 +17,26 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
 
-  // navigate 요청 (페이지 이동): 캐시 우선, 없으면 네트워크
+  const url = new URL(e.request.url);
+
+  // sw.js는 절대 캐시하지 않음 → 항상 네트워크에서 가져옴
+  if (url.pathname.endsWith('sw.js')) return;
+
+  // navigate 요청 (페이지 로드): 네트워크 우선, 실패 시 캐시
   if (e.request.mode === 'navigate') {
     e.respondWith(
-      caches.match(e.request).then(cached => cached || fetch(e.request))
+      fetch(e.request)
+        .then(res => {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+          return res;
+        })
+        .catch(() => caches.match(e.request))
     );
     return;
   }
 
-  // 그 외 리소스: stale-while-revalidate (캐시 즉시 반환 + 백그라운드 갱신)
+  // 그 외 리소스: stale-while-revalidate
   e.respondWith(
     caches.open(CACHE).then(cache =>
       cache.match(e.request).then(cached => {
