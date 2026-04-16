@@ -679,7 +679,7 @@ function migrate(arr) {
 }
 
 function loadData() {
-  const saved = localStorage.getItem('godot-helper-v4');
+  const saved = localStorage.getItem('godot-helper-v5');
   if (saved) {
     try {
       const d = JSON.parse(saved);
@@ -691,7 +691,7 @@ function loadData() {
     } catch(e) {}
   }
   // try v3
-  const v3 = localStorage.getItem('godot-helper-v3');
+  const v3 = localStorage.getItem('godot-helper-v4');
   if (v3) {
     try {
       const d = JSON.parse(v3);
@@ -710,7 +710,7 @@ function loadData() {
 }
 
 function saveData() {
-  localStorage.setItem('godot-helper-v4', JSON.stringify({ glossary, snippets, howto, troubleshoot }));
+  localStorage.setItem('godot-helper-v5', JSON.stringify({ glossary, snippets, howto, troubleshoot }));
 }
 loadData();
 
@@ -1220,28 +1220,23 @@ document.getElementById('tabBar').addEventListener('wheel', function(e) {
   }
 }, { passive: false });
 
-// ── Service Worker 등록 ──
+// ── Service Worker 등록 (강제 갱신) ──
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
     .then(reg => {
+      // 즉시 업데이트 체크
       reg.update();
+      // 새 SW가 대기 중이면 바로 활성화
       reg.addEventListener('updatefound', () => {
         const newSW = reg.installing;
         newSW.addEventListener('statechange', () => {
-          if (newSW.state === 'waiting') {
-            newSW.postMessage({ type: 'SKIP_WAITING' });
+          if (newSW.state === 'activated') {
+            console.log('서비스워커 갱신 완료');
           }
         });
       });
     })
     .catch(() => {});
-
-  let reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (reloading) return;
-    reloading = true;
-    window.location.reload();
-  });
 }
 </script>
 </body>
