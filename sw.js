@@ -1,42 +1,79 @@
-// godot-helper sw.js - updated: 1776253611
-const CACHE = 'godot-helper-1776253611';
-const CORE = ['./', './index.html', './manifest.json'];
+// ══════════════════════════════════════
+//  Godot 학습 도우미 - Service Worker
+//  버전을 올리면 캐시가 갱신됩니다
+// ══════════════════════════════════════
+const CACHE_VERSION = 'v1.0.0';
+const CACHE_NAME = `godot-helper-${CACHE_VERSION}`;
 
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)));
-  self.skipWaiting();
-});
+// 캐시할 파일들
+const PRECACHE_URLS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+];
 
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-  ));
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-
-  const url = new URL(e.request.url);
-
-  // sw.js, navigate(페이지 로드)는 SW가 개입하지 않음 → 항상 네트워크에서 직접 가져옴
-  if (url.pathname.endsWith('sw.js')) return;
-  if (e.request.mode === 'navigate') return;
-
-  // 그 외 리소스(폰트, 아이콘 등): stale-while-revalidate
-  e.respondWith(
-    caches.open(CACHE).then(cache =>
-      cache.match(e.request).then(cached => {
-        const fp = fetch(e.request).then(res => {
-          if (res && res.status === 200) cache.put(e.request, res.clone());
-          return res;
-        }).catch(() => null);
-        return cached || fp;
-      })
-    )
+// ── Install: 필수 파일 미리 캐싱 ──
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(PRECACHE_URLS).catch(() => {
+        // 일부 파일(아이콘 등)이 없어도 설치 진행
+        return Promise.resolve();
+      }))
+      .then(() => self.skipWaiting()) // 새 SW 즉시 활성화
   );
 });
 
-self.addEventListener('message', e => {
-  if (e.data?.type === 'SKIP_WAITING') self.skipWaiting();
+// ── Activate: 옛날 캐시 청소 ──
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(
+        keys.filter((k) => k.startsWith('godot-helper-') && k !== CACHE_NAME)
+            .map((k) => caches.delete(k))
+      ))
+      .then(() => self.clients.claim()) // 즉시 제어권 획득
+  );
+});
+
+// ── Fetch: 네트워크 우선, 실패 시 캐시 (HTML용) / 캐시 우선 (정적 자원) ──
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+
+  // GET 요청만 처리
+  if (req.method !== 'GET') return;
+
+  // 외부 도메인은 스킵
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+
+  // HTML 문서는 네트워크 우선 (항상 최신 버전 확인)
+  if (req.mode === 'navigate' || req.destination === 'document') {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const resClone = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(req, resClone));
+          return res;
+        })
+        .catch(() => caches.match(req).then((r) => r || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  // 그 외(이미지, JSON 등)는 캐시 우선
+  event.respondWith(
+    caches.match(req).then((cached) => {
+      if (cached) return cached;
+      return fetch(req).then((res) => {
+        if (res && res.status === 200) {
+          const resClone = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(req, resClone));
+        }
+        return res;
+      }).catch(() => cached);
+    })
+  );
 });

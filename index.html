@@ -679,7 +679,7 @@ function migrate(arr) {
 }
 
 function loadData() {
-  const saved = localStorage.getItem('godot-helper-v5');
+  const saved = localStorage.getItem('godot-helper-v4');
   if (saved) {
     try {
       const d = JSON.parse(saved);
@@ -691,7 +691,7 @@ function loadData() {
     } catch(e) {}
   }
   // try v3
-  const v3 = localStorage.getItem('godot-helper-v4');
+  const v3 = localStorage.getItem('godot-helper-v3');
   if (v3) {
     try {
       const d = JSON.parse(v3);
@@ -710,7 +710,7 @@ function loadData() {
 }
 
 function saveData() {
-  localStorage.setItem('godot-helper-v5', JSON.stringify({ glossary, snippets, howto, troubleshoot }));
+  localStorage.setItem('godot-helper-v4', JSON.stringify({ glossary, snippets, howto, troubleshoot }));
 }
 loadData();
 
@@ -1141,9 +1141,30 @@ function saveRoadmapProgress(progress) {
   localStorage.setItem('godot-roadmap-v1', JSON.stringify(progress));
 }
 
+function getRoadmapOpen() {
+  const saved = JSON.parse(localStorage.getItem('godot-roadmap-open-v1') || 'null');
+  if (saved) return saved;
+  // 최초 1회: 1주차만 열기
+  return defaultRoadmap.map((_, i) => i === 0);
+}
+
+function saveRoadmapOpen(openArr) {
+  localStorage.setItem('godot-roadmap-open-v1', JSON.stringify(openArr));
+}
+
+function toggleRoadmapWeek(weekIdx) {
+  const openArr = getRoadmapOpen();
+  openArr[weekIdx] = !openArr[weekIdx];
+  saveRoadmapOpen(openArr);
+  // 펼침 상태만 토글하므로 DOM 직접 조작 (전체 rerender 안 함)
+  const el = document.querySelector(`[data-week-tasks="${weekIdx}"]`);
+  if (el) el.classList.toggle('open', openArr[weekIdx]);
+}
+
 function renderRoadmap() {
   const area = document.getElementById('roadmapArea');
   const progress = getRoadmapProgress();
+  const openArr = getRoadmapOpen();
   const totalTasks = defaultRoadmap.reduce((s,w) => s + w.tasks.length, 0);
   const doneTasks = progress.reduce((s,w) => s + w.filter(Boolean).length, 0);
   const totalPct = Math.round((doneTasks/totalTasks)*100);
@@ -1151,7 +1172,7 @@ function renderRoadmap() {
   area.innerHTML = `<div class="roadmap-container">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
       <div style="font-size:14px;color:var(--ink);">전체 진행률 <strong style="color:var(--godot-blue);">${totalPct}%</strong> <span style="font-size:11px;color:var(--muted);">(${doneTasks}/${totalTasks})</span></div>
-      <button class="tool-btn danger" onclick="if(confirm('로드맵 진행률을 초기화할까요?')){localStorage.removeItem('godot-roadmap-v1');renderRoadmap();showToast('로드맵 초기화 완료');}">↺ 진행률 초기화</button>
+      <button class="tool-btn danger" onclick="if(confirm('로드맵 진행률을 초기화할까요?')){localStorage.removeItem('godot-roadmap-v1');localStorage.removeItem('godot-roadmap-open-v1');renderRoadmap();showToast('로드맵 초기화 완료');}">↺ 진행률 초기화</button>
     </div>
     <div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-bottom:24px;">
       <div style="height:100%;width:${totalPct}%;background:var(--godot-blue);border-radius:4px;transition:width 0.3s;"></div>
@@ -1162,7 +1183,7 @@ function renderRoadmap() {
       const weekPct = Math.round((weekDone/weekTotal)*100);
       const isComplete = weekDone === weekTotal;
       return `<div class="roadmap-week" style="${isComplete?'border-color:var(--accent-green);':''}">
-        <div class="roadmap-week-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div class="roadmap-week-header" onclick="toggleRoadmapWeek(${wi})">
           <div class="roadmap-week-title">
             <span>${isComplete?'✅':'📅'} ${wi+1}주차</span> ${esc(week.title)}
           </div>
@@ -1171,7 +1192,7 @@ function renderRoadmap() {
             <div class="roadmap-mini-bar"><div class="roadmap-mini-fill" style="width:${weekPct}%;${isComplete?'background:var(--accent-green);':''}"></div></div>
           </div>
         </div>
-        <div class="roadmap-tasks${wi===0?' open':''}">
+        <div class="roadmap-tasks${openArr[wi]?' open':''}" data-week-tasks="${wi}">
           ${week.tasks.map((task, ti) => {
             const checked = progress[wi] && progress[wi][ti];
             const relatedHtml = task.related.length ? task.related.map(r => `<span class="task-related" onclick="event.stopPropagation();searchSnippet('${r}')">→ ${r}</span>`).join(' ') : '';

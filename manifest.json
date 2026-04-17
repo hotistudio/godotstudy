@@ -1,24 +1,32 @@
 {
   "name": "Godot 학습 도우미",
   "short_name": "Godot 도우미",
-  "description": "Godot Engine 4.x 학습 도우미 — 용어, 코드 스니펫, How-to 가이드, 퀴즈",
-  "start_url": "./index.html",
+  "description": "Godot Engine 4.x 학습을 위한 개인 노트 앱 - 용어, 코드 스니펫, How-to, 트러블슈팅, 로드맵을 한 곳에서 관리",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#202531",
-  "theme_color": "#478cbf",
   "orientation": "any",
+  "background_color": "#1a1d24",
+  "theme_color": "#478cbf",
+  "lang": "ko",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
