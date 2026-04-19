@@ -1,79 +1,118 @@
-// ══════════════════════════════════════
-//  Godot 학습 도우미 - Service Worker
-//  버전을 올리면 캐시가 갱신됩니다
-// ══════════════════════════════════════
-const CACHE_VERSION = 'v1.0.0';
-const CACHE_NAME = `godot-helper-${CACHE_VERSION}`;
+// ═══════════════════════════════════════════════════════════════
+// 호필 스튜디오 Service Worker
+// 오프라인 지원 + 리소스 캐싱
+// ═══════════════════════════════════════════════════════════════
 
-// 캐시할 파일들
-const PRECACHE_URLS = [
+const CACHE_VERSION = 'hopil-v0.4.17';
+const CACHE_NAME = `hopil-studio-${CACHE_VERSION}`;
+
+// 앱 셸 — 설치 시 미리 캐시할 리소스
+const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
 ];
 
-// ── Install: 필수 파일 미리 캐싱 ──
+// ─── INSTALL: 앱 셸 캐시 ─────────────────────────────────────────
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_URLS).catch(() => {
-        // 일부 파일(아이콘 등)이 없어도 설치 진행
-        return Promise.resolve();
-      }))
-      .then(() => self.skipWaiting()) // 새 SW 즉시 활성화
-  );
-});
-
-// ── Activate: 옛날 캐시 청소 ──
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(
-        keys.filter((k) => k.startsWith('godot-helper-') && k !== CACHE_NAME)
-            .map((k) => caches.delete(k))
-      ))
-      .then(() => self.clients.claim()) // 즉시 제어권 획득
-  );
-});
-
-// ── Fetch: 네트워크 우선, 실패 시 캐시 (HTML용) / 캐시 우선 (정적 자원) ──
-self.addEventListener('fetch', (event) => {
-  const req = event.request;
-
-  // GET 요청만 처리
-  if (req.method !== 'GET') return;
-
-  // 외부 도메인은 스킵
-  const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;
-
-  // HTML 문서는 네트워크 우선 (항상 최신 버전 확인)
-  if (req.mode === 'navigate' || req.destination === 'document') {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const resClone = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(req, resClone));
-          return res;
-        })
-        .catch(() => caches.match(req).then((r) => r || caches.match('./index.html')))
-    );
-    return;
-  }
-
-  // 그 외(이미지, JSON 등)는 캐시 우선
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((res) => {
-        if (res && res.status === 200) {
-          const resClone = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(req, resClone));
-        }
-        return res;
-      }).catch(() => cached);
+    caches.open(CACHE_NAME).then((cache) => {
+      // 개별 요청 실패해도 설치가 중단되지 않도록 각각 처리
+      return Promise.all(
+        APP_SHELL.map((url) =>
+          cache.add(url).catch((err) => {
+            console.warn('[SW] 캐시 실패:', url, err);
+          })
+        )
+      );
     })
   );
 });
+
+// ─── ACTIVATE: 이전 버전 캐시 정리 ───────────────────────────────
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((names) =>
+      Promise.all(
+        names
+          .filter((name) => name.startsWith('hopil-studio-') && name !== CACHE_NAME)
+          .map((name) => caches.delete(name))
+      )
+    ).then(() => self.clients.claim())
+  );
+});
+
+// ─── SKIP_WAITING 메시지 처리 ────────────────────────────────────
+// index.html 이 업데이트 감지 시 postMessage 로 호출
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// ─── FETCH: 네트워크 우선, 실패 시 캐시 ──────────────────────────
+// HTML · JS 같은 자주 업데이트되는 파일은 최신 우선.
+// 오프라인이거나 네트워크 실패 시에만 캐시 사용.
+// 구글 폰트 · CDN 리소스는 캐시 우선 (stale-while-revalidate).
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+
+  // POST 등 non-GET 은 그대로 통과
+  if (req.method !== 'GET') return;
+
+  const url = new URL(req.url);
+
+  // 외부 CDN/폰트는 stale-while-revalidate
+  const isExternalAsset =
+    url.hostname.includes('fonts.googleapis.com') ||
+    url.hostname.includes('fonts.gstatic.com') ||
+    url.hostname.includes('cdn.jsdelivr.net');
+
+  if (isExternalAsset) {
+    event.respondWith(staleWhileRevalidate(req));
+    return;
+  }
+
+  // 같은 출처: 네트워크 우선, 실패 시 캐시
+  if (url.origin === self.location.origin) {
+    event.respondWith(networkFirst(req));
+    return;
+  }
+
+  // 그 외는 기본 동작
+});
+
+async function networkFirst(req) {
+  try {
+    const fresh = await fetch(req);
+    // 성공 응답만 캐시에 저장
+    if (fresh && fresh.status === 200 && fresh.type !== 'opaque') {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(req, fresh.clone()).catch(() => {});
+    }
+    return fresh;
+  } catch (err) {
+    const cached = await caches.match(req);
+    if (cached) return cached;
+    // 네비게이션 요청이면 index.html 폴백
+    if (req.mode === 'navigate') {
+      const fallback = await caches.match('./index.html');
+      if (fallback) return fallback;
+    }
+    throw err;
+  }
+}
+
+async function staleWhileRevalidate(req) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(req);
+  const fetchPromise = fetch(req)
+    .then((res) => {
+      if (res && res.status === 200) cache.put(req, res.clone()).catch(() => {});
+      return res;
+    })
+    .catch(() => cached);
+  return cached || fetchPromise;
+}
