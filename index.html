@@ -411,6 +411,220 @@
   pre.code::-webkit-scrollbar-track { background: transparent; }
   pre.code::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
 
+  /* === 로드맵: 주차별 체크리스트 === */
+  .roadmap-progress {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .roadmap-progress-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .roadmap-progress-label strong {
+    color: var(--accent);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+  }
+  .roadmap-progress-bar {
+    flex: 1;
+    min-width: 120px;
+    height: 8px;
+    background: var(--border-soft);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .roadmap-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+    border-radius: 4px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .roadmap-reset {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-dim);
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .roadmap-reset:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+  }
+
+  /* 전체를 한 열로 (주차 블록은 가로폭 넓게) */
+  .grid.roadmap-grid {
+    grid-template-columns: 1fr;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.15s;
+  }
+  .week-card:hover { border-color: var(--border); }
+  .week-card.completed { opacity: 0.65; }
+  .week-card.completed .week-title { text-decoration: line-through; }
+
+  .week-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+    transition: background 0.15s;
+  }
+  .week-header:hover { background: var(--surface-hover); }
+  .week-badge {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .week-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+    letter-spacing: -0.2px;
+  }
+  .week-stats {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .week-mini-bar {
+    width: 50px;
+    height: 5px;
+    background: var(--border-soft);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .week-mini-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .week-toggle {
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    margin-left: 4px;
+  }
+  .week-card.collapsed .week-toggle { transform: rotate(-90deg); }
+
+  .week-tasks {
+    list-style: none;
+    padding: 4px 18px 16px;
+    margin: 0;
+    border-top: 1px solid var(--border-soft);
+  }
+  .week-card.collapsed .week-tasks { display: none; }
+
+  .week-task {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .week-task:last-child { border-bottom: none; }
+  .task-check {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    cursor: pointer;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    margin-top: 1px;
+  }
+  .task-check:hover { border-color: var(--accent); }
+  .week-task.done .task-check {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .week-task.done .task-check::after {
+    content: '✓';
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  .task-content {
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .task-text { color: var(--text); }
+  .week-task.done .task-text {
+    text-decoration: line-through;
+    color: var(--text-muted);
+  }
+  .task-link {
+    font-size: 12.5px;
+    color: var(--accent);
+    cursor: pointer;
+    border-bottom: 1px dashed var(--accent);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .task-link:hover {
+    color: var(--accent-hover);
+    border-bottom-style: solid;
+  }
+  .week-task.done .task-link {
+    color: var(--text-muted);
+    border-bottom-color: var(--text-muted);
+  }
+
+  /* 하이라이트 애니메이션 (링크 클릭 후 해당 카드로 이동했을 때) */
+  @keyframes highlight-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); border-color: var(--border-soft); }
+    30% { box-shadow: 0 0 0 6px var(--accent-glow); border-color: var(--accent); }
+  }
+  .card.highlighted {
+    animation: highlight-pulse 1.4s ease-out 2;
+    border-color: var(--accent) !important;
+  }
+
   /* === 모달 === */
   .modal-bg {
     display: none;
@@ -545,7 +759,7 @@
   </div>
   </div>
 
-  <div class="toolbar">
+  <div class="toolbar" id="filterBar">
     <input type="text" class="search" id="search" placeholder="🔍 제목 또는 내용 검색...">
     <button class="filter-btn active" data-cat="all">전체</button>
     <button class="filter-btn" data-cat="pinned">⭐ 즐겨찾기</button>
@@ -553,7 +767,7 @@
   <div class="toolbar" id="catFilters"></div>
 
   <div class="toolbar-row2">
-    <button class="action-btn primary" onclick="openModal()">+ 항목 추가</button>
+    <button class="action-btn primary" onclick="openModal()" id="addBtn">+ 항목 추가</button>
     <button class="action-btn" onclick="exportData()">↓ 내보내기</button>
     <button class="action-btn" onclick="document.getElementById('importFile').click()">↑ 불러오기</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
@@ -749,6 +963,16 @@ function render() {
   });
   document.getElementById('totalCount').textContent = total;
 
+  // 로드맵 탭은 완전히 다른 렌더링
+  const isRoadmap = state.currentType === 'roadmap';
+  document.getElementById('filterBar').style.display = isRoadmap ? 'none' : '';
+  document.getElementById('catFilters').style.display = isRoadmap ? 'none' : '';
+  document.getElementById('addBtn').style.display = isRoadmap ? 'none' : '';
+  if (isRoadmap) {
+    renderRoadmap();
+    return;
+  }
+
   let items = state.data[state.currentType] || [];
   if (state.currentCat === 'pinned') items = items.filter(i => i.pinned);
   else if (state.currentCat !== 'all') items = items.filter(i => i.cat === state.currentCat);
@@ -756,11 +980,140 @@ function render() {
 
   document.getElementById('meta').textContent = items.length + '개 표시 중';
   const grid = document.getElementById('grid');
+  grid.className = 'grid';
   if (items.length === 0) {
     grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📭</div>항목이 없습니다</div>';
     return;
   }
   grid.innerHTML = items.map(i => renderCard(i, state.currentType)).join('');
+}
+
+function renderRoadmap() {
+  const weeks = state.data.roadmap || [];
+  const grid = document.getElementById('grid');
+  grid.className = 'grid roadmap-grid';
+
+  // 전체 진행률 계산
+  let totalTasks = 0, totalDone = 0;
+  weeks.forEach(w => {
+    const tasks = w.tasks || [];
+    totalTasks += tasks.length;
+    totalDone += (w.taskDone || []).filter(Boolean).length;
+  });
+  const pct = totalTasks > 0 ? Math.round(totalDone / totalTasks * 100) : 0;
+  document.getElementById('meta').textContent = `${weeks.length}주차 · 총 ${totalTasks}개 과제`;
+
+  if (weeks.length === 0) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📭</div>로드맵이 없습니다</div>';
+    return;
+  }
+
+  const progressBar = `
+    <div class="roadmap-progress">
+      <div class="roadmap-progress-label">전체 진행률 <strong>${pct}%</strong> <span style="color:var(--text-muted);font-weight:500;font-size:12px">(${totalDone}/${totalTasks})</span></div>
+      <div class="roadmap-progress-bar"><div class="roadmap-progress-fill" style="width:${pct}%"></div></div>
+      <button class="roadmap-reset" onclick="resetRoadmapProgress()">↻ 진행률 초기화</button>
+    </div>
+  `;
+
+  const weekCards = weeks.map(w => renderWeek(w)).join('');
+  grid.innerHTML = progressBar + weekCards;
+}
+
+function renderWeek(w) {
+  const tasks = w.tasks || [];
+  const taskDone = Array.isArray(w.taskDone) ? w.taskDone : [];
+  const doneCount = taskDone.filter(Boolean).length;
+  const pct = tasks.length > 0 ? Math.round(doneCount / tasks.length * 100) : 0;
+  const allDone = tasks.length > 0 && doneCount === tasks.length;
+  const collapsed = w.collapsed === true ? 'collapsed' : '';
+  const completed = allDone ? 'completed' : '';
+
+  const tasksHtml = tasks.map((t, idx) => {
+    const done = taskDone[idx] ? 'done' : '';
+    const linkHtml = t.link
+      ? `<span class="task-link" onclick="event.stopPropagation();jumpToItem('${t.link.type}', ${JSON.stringify(t.link.query).replace(/"/g,'&quot;')})">→ ${escapeHtml(t.link.query)}</span>`
+      : '';
+    return `
+      <li class="week-task ${done}">
+        <span class="task-check" onclick="toggleWeekTask(${w.id}, ${idx})"></span>
+        <span class="task-content">
+          <span class="task-text">${escapeHtml(t.text)}</span>
+          ${linkHtml}
+        </span>
+      </li>
+    `;
+  }).join('');
+
+  return `
+    <div class="week-card ${completed} ${collapsed}" data-week-id="${w.id}">
+      <div class="week-header" onclick="toggleWeekCollapse(${w.id})">
+        <div class="week-badge">📅 ${w.week}주차</div>
+        <div class="week-title">${escapeHtml(w.title || '')}</div>
+        <div class="week-stats">
+          <span>${doneCount}/${tasks.length}</span>
+          <div class="week-mini-bar"><div class="week-mini-fill" style="width:${pct}%"></div></div>
+          <span class="week-toggle">▼</span>
+        </div>
+      </div>
+      <ul class="week-tasks">${tasksHtml}</ul>
+    </div>
+  `;
+}
+
+function toggleWeekTask(weekId, idx) {
+  const w = state.data.roadmap.find(x => x.id === weekId);
+  if (!w) return;
+  const tasks = w.tasks || [];
+  if (!Array.isArray(w.taskDone)) w.taskDone = tasks.map(() => false);
+  while (w.taskDone.length < tasks.length) w.taskDone.push(false);
+  w.taskDone[idx] = !w.taskDone[idx];
+  save();
+  render();
+}
+
+function toggleWeekCollapse(weekId) {
+  const w = state.data.roadmap.find(x => x.id === weekId);
+  if (!w) return;
+  w.collapsed = !w.collapsed;
+  save();
+  render();
+}
+
+function resetRoadmapProgress() {
+  if (!confirm('모든 체크를 해제합니다. 계속하시겠습니까?')) return;
+  (state.data.roadmap || []).forEach(w => {
+    w.taskDone = (w.tasks || []).map(() => false);
+  });
+  save();
+  render();
+  toast('진행률 초기화 완료');
+}
+
+// 링크 클릭 → 해당 탭으로 이동 + 검색 + 하이라이트
+function jumpToItem(type, query) {
+  // 탭 전환
+  const tabBtn = document.querySelector(`.tab[data-type="${type}"]`);
+  if (!tabBtn) return;
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  tabBtn.classList.add('active');
+  state.currentType = type;
+  state.currentCat = 'all';
+  state.search = query.toLowerCase();
+  document.getElementById('search').value = query;
+  renderCatFilters();
+  render();
+  tabBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+
+  // 첫 번째 매칭 카드 하이라이트
+  setTimeout(() => {
+    const firstCard = document.querySelector('#grid .card');
+    if (firstCard) {
+      firstCard.classList.add('highlighted');
+      firstCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => firstCard.classList.remove('highlighted'), 3000);
+    }
+  }, 100);
 }
 
 function renderCard(i, type) {
@@ -800,11 +1153,6 @@ function renderCard(i, type) {
       ${i.symptom ? `<div class="card-section"><b>증상</b>${escapeHtml(i.symptom)}</div>` : ''}
       ${i.cause ? `<div class="card-section"><b>원인</b>${escapeHtml(i.cause)}</div>` : ''}
       ${i.solution ? `<div class="card-section"><b>해결</b>${escapeHtml(i.solution)}</div>` : ''}
-    `;
-  } else if (type === 'roadmap') {
-    body = `
-      <div class="card-meta-row"><span class="card-tag">${cat}</span></div>
-      <div class="card-desc">${escapeHtml(i.desc || '')}</div>
     `;
   }
 
